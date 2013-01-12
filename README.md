@@ -133,7 +133,7 @@ onMessages : {
 
 	// when the "selected" message from the resourcesCollectionView child view
 	// is received, call the _onResourceSelected method on this view
-	"selected resourcesCollectionView" : "_onResourceSelected"
+	"selected resourcesCollectionView" : "_onResourceSelected",
 
 	"giveMeInfo!" : function( message ) {
 		// handle the "giveMeInfo!" round trip message. return contents
@@ -245,7 +245,7 @@ ui : {
 // valueFld is equivalent to [name='value']
 spawnMessages : {
 	"focus valueFld" : "focus",
-	"change valueFld" : "change",
+	"change valueFld" : "change"
 },
 
 // you can even use aliases in events hash. this is a free-bee for consistency
@@ -265,4 +265,4 @@ _valueFld_onKeyUp : function() {
 
 ## Feedback and bug reports
 
-*Please* send your feedback, suggestions, and bug reports to [David Beck](https://github.com/dgbeck). This is an early version of the library and I'd love to hear your suggestions on how it can be polished and / or improved for your paricular needs.
+*Please* send your feedback, suggestions, and bug reports to [David Beck](https://github.com/dgbeck). This is an early version of the library and we'd love to hear your suggestions on how it can be polished and / or improved for your paricular needs.

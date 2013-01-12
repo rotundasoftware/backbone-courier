@@ -1,6 +1,6 @@
 /*!
  * Backbone.Marionette.Courier, v0.1
- * Copyright (c)2012 David Beck, Rotunda Software, LLC.
+ * Copyright (c)2012 Rotunda Software, LLC.
  * Distributed under MIT license
  * http://github.com/dgbeck/backbone.marionette.courier
 */
