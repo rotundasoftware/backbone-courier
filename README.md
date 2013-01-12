@@ -1,5 +1,4 @@
 
-
 # Backbone.Courier
 
 An easy and intuitive way for your [Backbone.js](http://backbonejs.org/) views to interact, providing an alternative to explicit dependencies, trigger chains, and event aggregators.
@@ -115,7 +114,7 @@ The `onMessages` hash is the means by which a parent view can take action on, or
 
 * `message.name` is the name of the message
 * `message.data` is an application defined data object, as provided the in second argument to `view.spawn()`
-* `message.source` is the name of the child view that spawned or passed this message to this view.
+* `message.source` is the child view object that spawned or passed this message to this view.
 
 The `messageName` portion of the `onMessages` hash keys is matched against the name of the messages that are received. An asterix character `*` can be used as a wildcard in the `messageName` to match zero or more letters, numbers, or underscores. (If multiple entries match the message name, the most specific entry will "win", that is, the entry with the greatest number of non-wildcard characters will be used.)
 
