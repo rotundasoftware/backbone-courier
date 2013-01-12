@@ -10,7 +10,7 @@ An easy and intuitive way for your [Backbone.js](http://backbonejs.org/) views t
 * Makes it easy to modify messages as appropriate for larger contexts as they bubble up your view hierarchy.
 * Takes advantage of existing DOM tree to automatically infer view hierarchy structure (by default).
 * Allows child views to call specific functions on their parent views that return values, without explicit dependencies.
-* Provides option to explicitly enumerate the messages are allowed to be emitted by each view.
+* Provides option to enumerate the exact messages are allowed to be emitted by each view.
 * Does not use event binding or explicit references so there is no cleanup necessary when views are destroyed.
 
 ## What is the problem, anyway
@@ -25,64 +25,70 @@ A well designed Backbone.js application tends to contain a lot of views. Some vi
 
 ## View specific problem, view specific solution
 
-There are two properties unique to views that can be leveraged to introduce a fourth way that they might interact with each other, eliminating unneeded explicit dependencies, and forcing implicit dependencies to adhere to a well defined structure. First, views only trigger events that are listened to by other views. The view layer is on its "own plane" in this regard. (You are committing a severe design error if your models or collections are in any way aware of your view layer.) It is therefore possible to implement a simplified mechanism for inter-view interaction that depends on the another property unique to views: that they have a natural hierarchy, which is mirrored by their elements' positions in the DOM tree.
+Views are unique in that they only trigger events that are listened to by other views. The view layer is on its "own plane" in this regard. (You are committing a severe design error if your models or collections are in any way aware of your view layer.) It is therefore acceptable to implement a simplified mechanism for inter-view interaction by leveraging another property unique to views: that they have a natural hierarchy, which is mirrored by their elements' positions in the DOM tree.
 
 ## How it works
 
 Include Backbone.Courier in your project. Now you can mixin Backbone.Courier functionality to your views:
 
-	var myView = new Backbone.View();
-	Backbone.Courier.add( myView ); // add courier functionality to myView
+```javascript
+var myView = new Backbone.View();
+Backbone.Courier.add( myView ); // add courier functionality to myView
+```
 
 A view spawns a message that is passed to its parent using `view.spawn( messageName, [data] )`:
 
-	myView.spawn( "selected", { 
-		methodOfSelection: "click"
-	} );
+```javascript
+myView.spawn( "selected", { 
+	methodOfSelection: "click"
+} );
+```
 
 The view's parent can then "handle" the message and / or pass it to the parent's own parent, and so on, up the view hierarchy. By default, the DOM tree is used to automatically infer the view hierarchy structure.
 
-	MyViewClass = Backbone.View.extend( {
-		initialize : function() {
-			Backbone.Courier.add( this );
-		}
-
-		// "handle" the "selected" message from a child view.
-		onMessages : {
-			"selected" : "_onChildSelected"
-		}
-
-		// pass the "selected" message from a child view up to this view's
-		// parent, changing the message's name to "resourceSelected"
-		passMessages : {
-			"selected" : "resourceSelected"
-		},
-
-		_onChildSelected : function( message ) {
-			alert( "My child view just spawned the 'selected' message. As dictated " +
-				"by my passMessages hash, I'll change it's name to 'resourceSelected', " + 
-				"then pass it to my own parent view." );
-
-			// the message argument that is passed to message 
-			// handlers has three properties. The name of the message:
-			assert( message.name === "selected" );
-
-			// any application defined data that has been supplied:
-			assert( message.data.methodOfSelection === "click" );
-
-			// and the child view object that spawned or 
-			// passed this message (in this case, myView):
-			assert( message.source instanceof Backbone.View );
-		}
-
-		// a separate example. messages can also be used to get dynamic
-		// values from ancestors, without explicit dependencies.
-		_getInfoFromAncestor : function() {
-			// messages that end in "!" have return values. They must
-			// be handled by an ancestor, or an error will be thrown.
-			var info = this.spawn( "giveMeYourInfo!" );
-		}
+```javascript
+MyViewClass = Backbone.View.extend( {
+	initialize : function() {
+		Backbone.Courier.add( this );
 	}
+
+	// "handle" the "selected" message from a child view.
+	onMessages : {
+		"selected" : "_onChildSelected"
+	}
+
+	// pass the "selected" message from a child view up to this view's
+	// parent, changing the message's name to "resourceSelected"
+	passMessages : {
+		"selected" : "resourceSelected"
+	},
+
+	_onChildSelected : function( message ) {
+		alert( "My child view just spawned the 'selected' message. As dictated " +
+			"by my passMessages hash, I'll change it's name to 'resourceSelected', " + 
+			"then pass it to my own parent view." );
+
+		// the message argument that is passed to message 
+		// handlers has three properties. The name of the message:
+		assert( message.name === "selected" );
+
+		// any application defined data that has been supplied:
+		assert( message.data.methodOfSelection === "click" );
+
+		// and the child view object that spawned or 
+		// passed this message (in this case, myView):
+		assert( message.source instanceof Backbone.View );
+	}
+
+	// a separate example. messages can also be used to get dynamic
+	// values from ancestors, without explicit dependencies.
+	_getInfoFromAncestor : function() {
+		// messages that end in "!" have return values. They must
+		// be handled by an ancestor, or an error will be thrown.
+		var info = this.spawn( "giveMeYourInfo!" );
+	}
+}
+```
 
 ## Methods and Property reference
 
@@ -117,30 +123,33 @@ The `source` part of the hash key can be used to match only messages that come f
 
 The default implementation of `view._getChildViewByName()` expects that a hash of child views is kept in `view.subviews`, the keys of the hash being the names of the child views, and the values references to the child view objects themselves. (This implementation works seamlessly with [Backbone.Marionette.Subviews](https://github.com/dgbeck/backbone.marionette.subviews) plugin, since the Backbone.Marionette.Subviews plugin will automatically populate the `subviews` hash appropriately.) You may override `view._getChildViewByName()` if you would like to provide an alternate means of mapping `source` to child view objects. 
 
-	onMessages : {
-		"focused" : function( message ) {
-			// handle the "focused" message
-			alert( "child view focused" );
-			console.log( message.source ); // output child view that spawned or passed this message
-		},
-
-		// when the "selected" message from the resourcesCollectionView child view
-		// is received, call the _onResourceSelected method on this view
-		"selected resourcesCollectionView" : "_onResourceSelected"
-
-		"giveMeInfo!" : function( message ) {
-			// handle the "giveMeInfo!" round trip message. 'value'
-			// will be returned to the view that spawned the message
-			// as the return value of the view.spawn() method
-			var value = this._calculateDynamicValue();
-			return value;
-		}
+```javascript
+onMessages : {
+	"focused" : function( message ) {
+		// handle the "focused" message
+		alert( "child view focused" );
+		console.log( message.source ); // output child view that spawned or passed this message
 	},
 
-	_onResourceSelected : function( message ) {
-		// handle the selected message from the resourcesCollectionView child view
+	// when the "selected" message from the resourcesCollectionView child view
+	// is received, call the _onResourceSelected method on this view
+	"selected resourcesCollectionView" : "_onResourceSelected"
+
+	"giveMeInfo!" : function( message ) {
+		// handle the "giveMeInfo!" round trip message. 'value'
+		// will be returned to the view that spawned the message
+		// as the return value of the view.spawn() method
+		var value = this._calculateDynamicValue();
+		return value;
 	}
-	...
+},
+
+_onResourceSelected : function( message ) {
+	// handle the selected message from the resourcesCollectionView child view
+}
+
+...
+```
 
 ### view.passMessages
 
@@ -156,27 +165,29 @@ The value of `newMessage` determines the message that is passed to the view's pa
 
 Example entries in the `passMessages` hash:
 
-	passMessages : {
-		 // pass the "keyup" message on to parent, without any changes
-		"keyup" : ".",
+```javascript
+passMessages : {
+	 // pass the "keyup" message on to parent, without any changes
+	"keyup" : ".",
 
-		// change the "selected" message from the resourcesCollectionView
-		// child view to "resourceSelected", and pass to parent
-		"selected resourcesCollectionView" : "resourceSelected", 
+	// change the "selected" message from the resourcesCollectionView
+	// child view to "resourceSelected", and pass to parent
+	"selected resourcesCollectionView" : "resourceSelected", 
 
-		// change the "sortStart" message from the resourcesCollectionView 
-		// child view to "resourceSortStart", populate new message.data
-		// with { resourceModel : oldData.modelBeingSorted }, and pass to parent
-		"sortStart resourcesCollectionView" : function( message, oldData ) {
-			message.name = "resourceSortStart";
-			message.data.resourceModel = oldData.modelBeingSorted; 
-		},
-
-		 // pass all other messages on to parent, without any changes
-		"*" : "."
+	// change the "sortStart" message from the resourcesCollectionView 
+	// child view to "resourceSortStart", populate new message.data
+	// with { resourceModel : oldData.modelBeingSorted }, and pass to parent
+	"sortStart resourcesCollectionView" : function( message, oldData ) {
+		message.name = "resourceSortStart";
+		message.data.resourceModel = oldData.modelBeingSorted; 
 	},
 
-	...
+	 // pass all other messages on to parent, without any changes
+	"*" : "."
+},
+
+...
+```
 
 Note that in all cases, when a message is passed, `message.source` is overwritten and set to the view that is passing the message. If you require a reference to the object that originally spawned the message, you will need to keep that in `message.data` as the message bubbles up the hierarchy.
 
@@ -184,16 +195,18 @@ Note that in all cases, when a message is passed, `message.source` is overwritte
 
 `view.spawnMessages` is a convenience hash that facilitates spawning messages when DOM events occur within the view's DOM element. The keys of this hash take the same format as the keys in [Backbone's events hash](http://backbonejs.org/#View-delegateEvents). If the value of an entry is a string, a message is spawned with that name. You can also provide a function body as the value of an entry to spawn a message that contains application defined data. The function will be passed two parameters, the first being the message that will be spawned, and the second being the event object as provided by the DOM library.
 
-	spawnMessages : {
-		// spawn the leftLabelClicked message when a click event
-		// occurs in the element matching selector div.left.label
-		"click div.left.label" : "leftLabelClicked",
+```javascript
+spawnMessages : {
+	// spawn the leftLabelClicked message when a click event
+	// occurs in the element matching selector div.left.label
+	"click div.left.label" : "leftLabelClicked",
 
-		"focus input[type='text']" : function( message, e ) {
-			message.name = "inputFocused";
-			message.data.initialValue = $( "input[type='text']" ).val();
-		}
+	"focus input[type='text']" : function( message, e ) {
+		message.name = "inputFocused";
+		message.data.initialValue = $( "input[type='text']" ).val();
 	}
+}
+```
 
 Like many of the build in Backbone.js hashes, `spawnMessages` can also be supplied as a function that returns a hash.
 
@@ -201,7 +214,9 @@ Like many of the build in Backbone.js hashes, `spawnMessages` can also be suppli
 
 `view.allowedMessages` is an *optional* array that provides a means to enumerate the messages that may be spawned or passed by a particular view. Its elements are message names that are allowed to be spawned or passed by the view. (The asterix (`*`) wildcard is *not* supported in the `allowedMessags` hash.) If a view attempts to spawn or pass a message that is not in the array, and error will be thrown.
 
-	allowedMessages : [ "keyup, "selected", "sortStart", "giveMeYourInfo!", ... ]
+```javascript
+allowedMessages : [ "keyup, "selected", "sortStart", "giveMeYourInfo!", ... ]
+```
 
 If no `allowedMessages` array is provided for a view, there are no limitations on the messages that the view can spawn or pass. `allowedMessages` can also be supplied as a function that returns a hash.
 
@@ -221,25 +236,27 @@ The following methods may be overridden to customize Backbone.Courier for your e
 
 If you are using [Backbone.Marionette](https://github.com/marionettejs/backbone.marionette), you can reuse the aliases defined in the `ui` hash in your `spawnMessages` hash, and even in your `events` hash, so that you do not have to repeat the same selectors between the various hashes. For example:
 
-	// Backbone.Marionette's ui hash
-	ui : {
-		"valueFld" : "[name='value']"
-	}
+```javascript
+// Backbone.Marionette's ui hash
+ui : {
+	"valueFld" : "[name='value']"
+}
 
-	// valueFld is equivalent to [name='value']
-	spawnMessages : {
-		"focus valueFld" : "focus",
-		"change valueFld" : "change",
-	},
+// valueFld is equivalent to [name='value']
+spawnMessages : {
+	"focus valueFld" : "focus",
+	"change valueFld" : "change",
+},
 
-	// you can even use aliases in events hash. this is a free-bee for consistency
-	events : {
-		"keyup valueFld" : "_valueFld_onKeyUp"
-	},
+// you can even use aliases in events hash. this is a free-bee for consistency
+events : {
+	"keyup valueFld" : "_valueFld_onKeyUp"
+},
 
-	_valueFld_onKeyUp : function() {
-		// handle keyup event from element matching selector "[name='value']"
-	}
+_valueFld_onKeyUp : function() {
+	// handle keyup event from element matching selector "[name='value']"
+}
+```
 
 ## Dependencies
 
