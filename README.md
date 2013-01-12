@@ -102,7 +102,7 @@ The `spawn` method generates a new message and passes it to the view's "parent",
 
 `messageName` is the name of the message being spawned. The name is used in the `onMessages` and `passMessages` hashes of ancestor views to handle or pass the message further up the view hierarchy, respectively.
 
-If `messageName` ends in `!`, the message is considered a "round trip message". Round trip messages are special in that they return values. That is, the view.spawn() method will return the value returned by the first (and only) method that handles the message. Using round trip messages views can obtain dynamic information about their environment that, because it is dynamic, can not be passed in through configuration options. Round trip messages have two other special characteristics:
+If `messageName` ends in `!`, the message is considered a "round trip message". Round trip messages are special in that they return values. That is, the view.spawn() method will return the value returned by the first (and only) method that handles the message. Using round trip messages, views can obtain dynamic information about their environment that, because it is dynamic, can not be passed in through configuration options. Round trip messages have two other special characteristics:
 
 * Round trip messages *must* be handled. If they are not handled by any ancestor view, an error will be thrown.
 * Once a round trip message has been handled, it will not continue to be passed up the view hierarchy.
@@ -117,7 +117,7 @@ The `onMessages` hash is the means by which a parent view can take action on, or
 * `message.data` is an application defined data object, as provided the in second argument to `view.spawn()`
 * `message.source` is the name of the child view that spawned or passed this message to this view.
 
-The `messageName` portion of the `onMessages` hash keys is matched against the name of the messages that are received. An asterix (`*`) can be used as a wild card character in the `messageName` to match zero or more letters, numbers, or underscores. (If multiple entries match the message name, the most specific entry will "win", that is, the entry with the greatest number of non-wildcard characters will be used.
+The `messageName` portion of the `onMessages` hash keys is matched against the name of the messages that are received. An asterix character `*` can be used as a wildcard in the `messageName` to match zero or more letters, numbers, or underscores. (If multiple entries match the message name, the most specific entry will "win", that is, the entry with the greatest number of non-wildcard characters will be used.)
 
 The `source` part of the hash key can be used to match only messages that come from a particular child view. The view reference is resolved using the override-able `view._getChildViewByName()` method. (Matching entries in the `onMessages` hash that have a `source` specified are always considered more specific than those that do not have any `source` specified.)
 
@@ -136,8 +136,8 @@ onMessages : {
 	"selected resourcesCollectionView" : "_onResourceSelected"
 
 	"giveMeInfo!" : function( message ) {
-		// handle the "giveMeInfo!" round trip message. 'value'
-		// will be returned to the view that spawned the message
+		// handle the "giveMeInfo!" round trip message. return contents
+		// of `value` to the view that spawned the message,
 		// as the return value of the view.spawn() method
 		var value = this._calculateDynamicValue();
 		return value;
@@ -161,7 +161,7 @@ The value of `newMessage` determines the message that is passed to the view's pa
 
 * If you do not want to change the message at all before passing it up the hierarchy, specify the string `"."` (a single period) as the value for `newMessage`.
 * If you would like to change the name of the message, but keep the application defined data the same, specify the new name for the message as the value for `newMessage`.
-* If you would like to change the application defined data in the message, specify a direct function body for the value of `newMessage`. The function will be called with two arguments. The first is the message object, with an empty object `{}` as its `message.data` property. The second argument will be the old application defined data. You can also change the name of the message by setting `message.name`.
+* If you would like to change the application defined data in the message, specify a direct function body for the value of `newMessage`. The function will be called with two arguments. The first is the message object, with an empty object `{}` as its `message.data` property. The second argument will be the old application defined data, that is, the data passed up by the child view. You can also change the name of the message by setting `message.name`.
 
 Example entries in the `passMessages` hash:
 
@@ -212,13 +212,13 @@ Like many of the build in Backbone.js hashes, `spawnMessages` can also be suppli
 
 ### view.allowedMessages
 
-`view.allowedMessages` is an *optional* array that provides a means to enumerate the messages that may be spawned or passed by a particular view. Its elements are message names that are allowed to be spawned or passed by the view. (The asterix (`*`) wildcard is *not* supported in the `allowedMessags` hash.) If a view attempts to spawn or pass a message that is not in the array, and error will be thrown.
+`view.allowedMessages` is an *optional* array that provides a means to enumerate the messages that may be spawned or passed by a particular view. Its elements are message names that are allowed to be spawned or passed by the view. (The asterix wildcard is *not* supported in the `allowedMessags` hash.) If a view attempts to spawn or pass a message that is not in the array, and error will be thrown.
 
 ```javascript
-allowedMessages : [ "keyup, "selected", "sortStart", "giveMeYourInfo!", ... ]
+allowedMessages : [ "keyup", "selected", "sortStart", "giveMeYourInfo!", ... ]
 ```
 
-If no `allowedMessages` array is provided for a view, there are no limitations on the messages that the view can spawn or pass. `allowedMessages` can also be supplied as a function that returns a hash.
+If no `allowedMessages` array is provided for a view, there are no limitations on the messages that the view can spawn or pass. `allowedMessages` can also be supplied as a function that returns an array.
 
 ## Internal view methods that may be overridden
 
@@ -265,4 +265,4 @@ _valueFld_onKeyUp : function() {
 
 ## Feedback and bug reports
 
-Please send your feedback, suggestions, and bug reports to [David Beck](https://github.com/dgbeck). This is an early version of the library and I'd love to hear your suggestions on how it can be polished and / or improved for your paricular needs.
+*Please* send your feedback, suggestions, and bug reports to [David Beck](https://github.com/dgbeck). This is an early version of the library and I'd love to hear your suggestions on how it can be polished and / or improved for your paricular needs.
