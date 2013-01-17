@@ -265,4 +265,4 @@ _valueFld_onKeyUp : function() {
 
 ## Feedback and bug reports
 
-*Please* send your feedback, suggestions, and bug reports to [David Beck](https://github.com/dgbeck). This is an early version of the library and we'd love to hear your suggestions on how it can be polished and / or improved for your paricular needs.
+*Please* share your feedback, suggestions, and bug reports by opening issues. This is an early version of the library and we'd love to hear your suggestions on how it can be polished and / or improved for your paricular needs.
