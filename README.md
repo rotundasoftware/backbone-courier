@@ -38,21 +38,19 @@ MyViewClass = Backbone.View.extend( {
 		Backbone.Courier.add( this );
 	}
 
-	// "handle" the "selected" message from a child view.
+	// "handle" the "selected" message from any child view.
 	onMessages : {
 		"selected" : "_onChildSelected"
 	}
 
-	// pass the "selected" message from a child view up to this view's
+	// pass the "selected" message from any child view up to this view's
 	// parent, changing the message's name to "resourceSelected"
 	passMessages : {
 		"selected" : "resourceSelected"
 	},
 
 	_onChildSelected : function( message ) {
-		alert( "My child view just spawned the 'selected' message. As dictated " +
-			"by my passMessages hash, I'll change it's name to 'resourceSelected', " + 
-			"then pass it to my own parent view." );
+		alert( "My child view just spawned the 'selected' message." );
 
 		// the message argument that is passed to message 
 		// handlers has three properties. The name of the message:
@@ -64,6 +62,11 @@ MyViewClass = Backbone.View.extend( {
 		// and the child view object that spawned or 
 		// passed this message (in this case, myView):
 		assert( message.source instanceof Backbone.View );
+
+		
+		alert( "After I'm done here, because of the entry in my passMessages "
+			"hash, I'll change this message's name to 'resourceSelected', " + 
+			"then pass it to my own parent view." );
 	}
 
 	// a separate example. messages can also be used to get dynamic
