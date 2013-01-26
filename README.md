@@ -92,17 +92,12 @@ The `spawn` method generates a new message and passes it to the view's "parent",
 
 `data` is an application defined data object that will be available to this view's ancestors when handling or passing this message.
 
-<blockquote style="color: black">
-<h4>
-<a name="round-trip-messages" class="anchor" href="#round-trip-messages"><span class="mini-icon mini-icon-link"></span></a>Round trip messages</h4>
-
-<p>If <code>messageName</code> ends in <code>!</code>, the message is considered a "round trip message". Round trip messages are special in that they return values. That is, the view.spawn() method will return the value returned by the first (and only) method that handles the message. Using round trip messages, views can obtain dynamic information about their environment that, because it is dynamic, can not be passed in through configuration options. Round trip messages have two other special characteristics:</p>
-
-<ul>
-<li>Round trip messages <em>must</em> be handled. If they are not handled by any ancestor view, an error will be thrown.</li>
-<li>Once a round trip message has been handled, it will not continue to be passed up the view hierarchy.</li>
-</ul>
-</blockquote>
+> #### Round trip messages
+> 
+> If `messageName` ends in `!`, the message is considered a "round trip message". Round trip messages are special in that they return values. That is, the view.spawn() method will return the value returned by the first (and only) method that handles the message. Using round trip messages, views can obtain dynamic information about their environment that, because it is dynamic, can not be passed in through configuration options. Round trip messages have two other special characteristics:
+>
+> * Round trip messages *must* be handled. If they are not handled by any ancestor view, an error will be thrown.
+> * Once a round trip message has been handled, it will not continue to be passed up the view hierarchy.
 
 ### view.onMessages
 
@@ -114,10 +109,13 @@ The `onMessages` hash is the means by which a parent view can take action on, or
 
 * The `source` portion can be used to match only messages that come from a particular child view. This feature fits together naturally with the [Backbone.Subviews](https://github.com/dgbeck/backbone.subviews) view mixin, because in order to map the `source` name to a particular child view, Backbone.Courier expects a hash of child views to be stored in `view.subviews` (the keys of the hash being the names of the child views, and the values references to the child view objects). This hash is setup automatically for you by the [Backbone.Subviews](Backbone.Subviews) mixin. (You may override `view._getChildViewByName()` if you would like to provide an alternate means of mapping the `source` portion to child view objects.)
 
-* The callback determines what is done when a matching message is received. Just like Backbone's events hash, you can either provide the callback as the name of a method on the view, or a direct function body. In either case, the message object is provided as the sole argument for the callback function. The message object always contains exactly three properties:
-	1. `message.name` is the name of the message
-	2. `message.data` is an application defined data object, as provided the in second argument to `view.spawn()`
-	3. `message.source` is the child view object that spawned or passed this message to this view.
+<li> The `callback` determines what is done when a matching message is received. Just like [Backbone's events hash](http://backbonejs.org/#View-delegateEvents), you can either provide the callback as the name of a method on the view, or a direct function body. In either case, the `message` object is provided as the sole argument for the callback function. The `message` object always contains exactly three properties:
+	<ol>
+		<li>`message.name` is the name of the message</li>
+		<li>``message.data` is an application defined data object, as provided the in second argument to `view.spawn()`</li>
+		<li>``message.source` is the child view object that spawned or passed this message to this view.</li>
+	</ol>
+</li>
 
 Example entries in the `onMessages` hash:
 
