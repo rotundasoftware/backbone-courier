@@ -109,13 +109,10 @@ The `onMessages` hash is the means by which a parent view can take action on, or
 
 * The `source` portion can be used to match only messages that come from a particular child view. This feature fits together naturally with the [Backbone.Subviews](https://github.com/dgbeck/backbone.subviews) view mixin, because in order to map the `source` name to a particular child view, Backbone.Courier expects a hash of child views to be stored in `view.subviews` (the keys of the hash being the names of the child views, and the values references to the child view objects). This hash is setup automatically for you by the [Backbone.Subviews](Backbone.Subviews) mixin. (You may override `view._getChildViewByName()` if you would like to provide an alternate means of mapping the `source` portion to child view objects.)
 
-<li> The `callback` determines what is done when a matching message is received. Just like [Backbone's events hash](http://backbonejs.org/#View-delegateEvents), you can either provide the callback as the name of a method on the view, or a direct function body. In either case, the `message` object is provided as the sole argument for the callback function. The `message` object always contains exactly three properties:
-	<ol>
-		<li>`message.name` is the name of the message</li>
-		<li>``message.data` is an application defined data object, as provided the in second argument to `view.spawn()`</li>
-		<li>``message.source` is the child view object that spawned or passed this message to this view.</li>
-	</ol>
-</li>
+* The `callback` determines what is done when a matching message is received. Just like [Backbone's events hash](http://backbonejs.org/#View-delegateEvents), you can either provide the callback as the name of a method on the view, or a direct function body. In either case, the `message` object is provided as the sole argument for the callback function. The `message` object always contains exactly three properties:
+	1. `message.name` is the name of the message
+	2. `message.data` is an application defined data object, as provided the in second argument to `view.spawn()`
+	3. `message.source` is the child view object that spawned or passed this message to this view.
 
 Example entries in the `onMessages` hash:
 
