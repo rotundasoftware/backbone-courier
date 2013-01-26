@@ -1,7 +1,7 @@
 
 # Backbone.Courier
 
-An easy and intuitive way for your [Backbone.js](http://backbonejs.org/) views to interact, providing an alternative to explicit dependencies, trigger chains, and event aggregators.
+Easily bubble events ("messages") up your view hierarchy in your [Backbone.js](http://backbonejs.org/) applications.
 
 ## Benefits
 * Provides an easy to use message path through which views can communicate up and down your view hierarchy.
@@ -9,22 +9,8 @@ An easy and intuitive way for your [Backbone.js](http://backbonejs.org/) views t
 * Makes it easy to modify messages as appropriate for larger contexts as they bubble up your view hierarchy.
 * Takes advantage of existing DOM tree to automatically infer view hierarchy structure (by default).
 * Allows child views to call specific functions on their parent views that return values, without explicit dependencies.
-* Provides option to enumerate the exact messages are allowed to be emitted by each view.
-* Does not use event binding or explicit references so there is no cleanup necessary when views are destroyed.
-
-## What is the problem, anyway
-
-A well designed Backbone.js application tends to contain a lot of views. Some views are totally self contained, but the majority of views need to interact in some way with other views on the page. There are generally many more views in a Backbone.js application than there are models and collections, and views tend to interact with each other for a wider variety of purposes. As a result managing interaction between views gets messy. The "out of the box" ways to implement view interaction are:
-
-1. Views can call methods of other views. If only it were always this simple! Although this is a straight forward means for views to communicate, and is appropriate in some circumstances, unfortunately when mis-used it can create unnecessary explicit dependencies, since the caller needs an explicit reference to the callee. As your application grows, these explicit dependencies lead to code that is difficult to maintain, re-factor, and test.
-
-2. Views can `trigger()` events, and other views can then listen for those events with `view.listenTo()` or `view.bind()`. While triggering and binding has its place, it also creates explicit dependencies (since the listener needs an explicit reference to the triggerer). Moreover, often times a child view will want to trigger an event of interest to its parent, which will in turn trigger an event of interest to the grandparent, etc. Implementing this behavior with `trigger()` and `listenTo()` leads to cumbersome and difficult to maintain "trigger / listenTo chains", or unnecessary explicit dependencies between child views and their ancestors.
-
-3. Event aggregators can be used to facilitate communication between views. While the event aggregator option is very powerful, there are at least two problems with over-use of this pattern. First, it leads to a criss cross of implicit dependencies, wherein any view is allows to interact, through an aggregator, with any other view. (This cross crossing is facilitated by the fact that aggregators are generally accessed through the global scope, bypassing any structure that encapsulates parts of the view hierarchy.) Secondly, aggregators are their own entities, and it becomes increasingly cumbersome to organize them and track which ones are used by which views as the number of aggregators grows.
-
-## View specific problem, view specific solution
-
-Views are unique in that they only trigger events that are listened to by other views. The view layer is on its "own plane" in this regard. (You are committing a severe design error if your models or collections are in any way aware of your view layer.) It is therefore acceptable to implement a simplified mechanism for inter-view interaction by leveraging another property unique to views: that they have a natural hierarchy, which is mirrored by their elements' positions in the DOM tree.
+* Provides option to enumerate the exact messages that are allowed to be emitted by each view.
+* Does not use event binding or explicit references so there is no cleanup necessary when views are removed.
 
 ## How it works
 
@@ -120,7 +106,7 @@ The `messageName` portion of the `onMessages` hash keys is matched against the n
 
 The `source` part of the hash key can be used to match only messages that come from a particular child view. The view reference is resolved using the override-able `view._getChildViewByName()` method. (Matching entries in the `onMessages` hash that have a `source` specified are always considered more specific than those that do not have any `source` specified.)
 
-The default implementation of `view._getChildViewByName()` expects that a hash of child views is kept in `view.subviews`, the keys of the hash being the names of the child views, and the values references to the child view objects themselves. (This implementation works seamlessly with [Backbone.Marionette.Subviews](https://github.com/dgbeck/backbone.marionette.subviews) plugin, since the Backbone.Marionette.Subviews plugin will automatically populate the `subviews` hash appropriately.) You may override `view._getChildViewByName()` if you would like to provide an alternate means of mapping `source` to child view objects. 
+The default implementation of `view._getChildViewByName()` expects that a hash of child views is kept in `view.subviews`, the keys of the hash being the names of the child views, and the values references to the child view objects themselves. This implementation fits together with the [Backbone.Subviews](https://github.com/dgbeck/backbone.subviews) view mixin, since the Backbone.Subviews mixin will automatically populate the `subviews` hash appropriately. You may override `view._getChildViewByName()` if you would like to provide an alternate means of mapping `source` to child view objects. 
 
 ```javascript
 onMessages : {
@@ -264,4 +250,4 @@ _valueFld_onKeyUp : function() {
 
 ## Feedback and bug reports
 
-Please share your feedback, suggestions, and bug reports by opening issues. This is an early version of the library and we'd love to hear your suggestions on how it can be polished and / or improved for your paricular needs.
+Please share your feedback, suggestions, and bug reports by opening issues. We'd love to hear your suggestions on how this plugin can be polished and / or improved for your paricular needs.
