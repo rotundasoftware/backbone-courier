@@ -105,14 +105,17 @@ The `onMessages` hash is the means by which a parent view can take action on, or
 	
 	"messageName source" : callback
 
-* The `messageName` portion is matched against the name of the messages that are received.
-
-* The `source` portion can be used to match only messages that come from a particular child view. This feature fits together naturally with the [Backbone.Subviews](https://github.com/dgbeck/backbone.subviews) view mixin, because in order to map the `source` name to a particular child view, Backbone.Courier expects a hash of child views to be stored in `view.subviews` (the keys of the hash being the names of the child views, and the values references to the child view objects). This hash is setup automatically for you by the [Backbone.Subviews](Backbone.Subviews) mixin. (You may override `view._getChildViewByName()` if you would like to provide an alternate means of mapping the `source` portion to child view objects.)
-
-* The `callback` determines what is done when a matching message is received. Just like [Backbone's events hash](http://backbonejs.org/#View-delegateEvents), you can either provide the callback as the name of a method on the view, or a direct function body. In either case, the `message` object is provided as the sole argument for the callback function. The `message` object always contains exactly three properties:
-	1. `message.name` is the name of the message
-	2. `message.data` is an application defined data object, as provided the in second argument to `view.spawn()`
-	3. `message.source` is the child view object that spawned or passed this message to this view.
+<ul>
+<li><p>The <code>messageName</code> portion is matched against the name of the messages that are received.</p></li>
+<li><p>The <code>source</code> portion can be used to match only messages that come from a particular child view. This feature fits together naturally with the <a href="https://github.com/dgbeck/backbone.subviews">Backbone.Subviews</a> view mixin, because in order to map the <code>source</code> name to a particular child view, Backbone.Courier expects a hash of child views to be stored in <code>view.subviews</code> (the keys of the hash being the names of the child views, and the values references to the child view objects). This hash is setup automatically for you by the <a href="Backbone.Subviews">Backbone.Subviews</a> mixin. (You may override <code>view._getChildViewByName()</code> if you would like to provide an alternate means of mapping the <code>source</code> portion to child view objects.)</p></li>
+<li>The <code>callback</code> determines what is done when a matching message is received. Just like <a href="http://backbonejs.org/#View-delegateEvents">Backbone's events hash</a>, you can either provide the callback as the name of a method on the view, or a direct function body. In either case, the <code>message</code> object is provided as the sole argument for the callback function. The <code>message</code> object always contains exactly three properties:
+<ol>
+<li><code>message.name</code> is the name of the message</li>
+<li><code>message.data</code> is an application defined data object, as provided the in second argument to <code>view.spawn()</code></li>
+<li><code>message.source</code> is the child view object that spawned or passed this message to this view.</li></li>
+</ol>
+</li>
+</ul>
 
 Example entries in the `onMessages` hash:
 
