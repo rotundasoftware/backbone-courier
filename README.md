@@ -92,12 +92,17 @@ The `spawn` method generates a new message and passes it to the view's "parent",
 
 `data` is an application defined data object that will be available to this view's ancestors when handling or passing this message.
 
-> #### Round trip messages
-> 
-> If `messageName` ends in `!`, the message is considered a "round trip message". Round trip messages are special in that they return values. That is, the view.spawn() method will return the value returned by the first (and only) method that handles the message. Using round trip messages, views can obtain dynamic information about their environment that, because it is dynamic, can not be passed in through configuration options. Round trip messages have two other special characteristics:
->
-> * Round trip messages *must* be handled. If they are not handled by any ancestor view, an error will be thrown.
-> * Once a round trip message has been handled, it will not continue to be passed up the view hierarchy.
+<blockquote style="color: black">
+<h4>
+<a name="round-trip-messages" class="anchor" href="#round-trip-messages"><span class="mini-icon mini-icon-link"></span></a>Round trip messages</h4>
+
+<p>If <code>messageName</code> ends in <code>!</code>, the message is considered a "round trip message". Round trip messages are special in that they return values. That is, the view.spawn() method will return the value returned by the first (and only) method that handles the message. Using round trip messages, views can obtain dynamic information about their environment that, because it is dynamic, can not be passed in through configuration options. Round trip messages have two other special characteristics:</p>
+
+<ul>
+<li>Round trip messages <em>must</em> be handled. If they are not handled by any ancestor view, an error will be thrown.</li>
+<li>Once a round trip message has been handled, it will not continue to be passed up the view hierarchy.</li>
+</ul>
+</blockquote>
 
 ### view.onMessages
 
