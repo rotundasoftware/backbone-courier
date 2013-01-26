@@ -4,13 +4,14 @@
 Easily bubble events ("messages") up your view hierarchy in your [Backbone.js](http://backbonejs.org/) applications.
 
 ## Benefits
-* Provides an easy to use message path through which views can communicate up and down your view hierarchy.
+* Provides an easy to use message path through which views can communicate up (and down) your view hierarchy.
 * Is designed to promote encapsulation of concerns, and does not rely on the use of application globals.
 * Makes it easy to modify messages as appropriate for larger contexts as they bubble up your view hierarchy.
 * Takes advantage of existing DOM tree to automatically infer view hierarchy structure (by default).
 * Allows child views to call specific functions on their parent views that return values, without explicit dependencies.
 * Provides option to enumerate the exact messages that are allowed to be emitted by each view.
 * Does not use event binding or explicit references so there is no cleanup necessary when views are removed.
+* Fits together with the [Backbone.Subviews](https://github.com/dgbeck/backbone.subviews) view mixin so parents can easily respond to messages from particular children.
 
 ## How it works
 
@@ -142,7 +143,7 @@ The `passMessages` hash can be used to pass messages received from a child view 
 
 The `messageName` and `source` parts of the hash key interpreted in exactly the same way as in the `onMessages` hash.
 
-The value of `newMessage` determines the message that is passed to the view's parent. It is often desirable to add additional specificity to a message as it bubbles up to a new, larger context. For example, "selected" might become "resourceSelected" as it moves from a resource view to a parent composite view that contains resources as well as other items. Also, it is sometimes desirable to change some of the application defined data in `message.data`, either to add additional specificity or to remove data that should remain private to lower levels of the view hierarchy.
+The value of `newMessage` determines the message that is passed to the view's parent. It is often desirable to add additional specificity to a message as it bubbles up to a new, larger context. For example, "selected" might become "resourceSelected" as it moves from a resource view to a larger parent view that contains resources as well as other items. Also, it is sometimes desirable to change some of the application defined data in `message.data`, either to add additional specificity or to remove data that should remain private to lower levels of the view hierarchy.
 
 * If you do not want to change the message at all before passing it up the hierarchy, specify the string `"."` (a single period) as the value for `newMessage`.
 * If you would like to change the name of the message, but keep the application defined data the same, specify the new name for the message as the value for `newMessage`.
@@ -194,16 +195,6 @@ spawnMessages : {
 ```
 
 Like many of the build in Backbone.js hashes, `spawnMessages` can also be supplied as a function that returns a hash.
-
-### view.allowedMessages
-
-`view.allowedMessages` is an *optional* array that provides a means to enumerate the messages that may be spawned or passed by a particular view. Its elements are message names that are allowed to be spawned or passed by the view. (The asterix wildcard is *not* supported in the `allowedMessags` hash.) If a view attempts to spawn or pass a message that is not in the array, and error will be thrown.
-
-```javascript
-allowedMessages : [ "keyup", "selected", "sortStart", "giveMeYourInfo!", ... ]
-```
-
-If no `allowedMessages` array is provided for a view, there are no limitations on the messages that the view can spawn or pass. `allowedMessages` can also be supplied as a function that returns an array.
 
 ## Internal view methods that may be overridden
 
