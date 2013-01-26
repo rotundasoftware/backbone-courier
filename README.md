@@ -102,7 +102,9 @@ The `onMessages` hash is the means by which a parent view can take action on, or
 	"messageName source" : callback
 
 * The `messageName` portion is matched against the name of the messages that are received.
+
 * The `source` portion can be used to match only messages that come from a particular child view. This feature fits together naturally with the [Backbone.Subviews](https://github.com/dgbeck/backbone.subviews) view mixin, because in order to map the `source` name to a particular child view, Backbone.Courier expects a hash of child views to be stored in `view.subviews` (the keys of the hash being the names of the child views, and the values references to the child view objects). This hash is setup automatically for you by the [Backbone.Subviews](Backbone.Subviews) mixin. (You may override `view._getChildViewByName()` if you would like to provide an alternate means of mapping the `source` portion to child view objects.)
+
 * The `callback` determines what is done when a matching message is received. Just like [Backbone's events hash](http://backbonejs.org/#View-delegateEvents), you can either provide the callback as the name of a method on the view, or a direct function body. In either case, the `message` object is provided as the sole argument for the callback function. The `message` object always contains exactly three properties:
   1. `message.name` is the name of the message
   2. `message.data` is an application defined data object, as provided the in second argument to `view.spawn()`
@@ -144,11 +146,11 @@ The `passMessages` hash can be used to pass messages received from a child view 
 
 The `messageName` and `source` parts of the hash key interpreted in exactly the same way as in the `onMessages` hash. 
 
-    > Note: An asterix character `*` can be used in both the `passMessages` and `onMessages` hashes as a
-    > wildcard in the `messageName` to match zero or more letters, numbers, or underscores. If multiple
-    > entries match the message name, the most specific entry will "win", that is, the entry with the
-    > greatest number of non-wildcard characters will be used. (Matching entries that have a `source`
-    > specified are always considered more specific than those that do not have any `source` specified.)
+   > Note: An asterix character `*` can be used in both the `passMessages` and `onMessages` hashes as a
+   > wildcard in the `messageName` to match zero or more letters, numbers, or underscores. If multiple
+   > entries match the message name, the most specific entry will "win", that is, the entry with the
+   > greatest number of non-wildcard characters will be used. (Matching entries that have a `source`
+   > specified are always considered more specific than those that do not have any `source` specified.)
 
 The value of `newMessage` determines the message that is passed to the view's parent. It is often desirable to add additional specificity to a message as it bubbles up to a new, larger context. For example, "selected" might become "resourceSelected" as it moves from a resource view to a larger parent view that contains resources as well as other items. Also, it is sometimes desirable to change some of the application defined data in `message.data`, either to add additional specificity or to remove data that should remain private to lower levels of the view hierarchy.
 
