@@ -103,11 +103,9 @@ The `onMessages` hash is the means by which a parent view can take action on, or
 * `message.data` is an application defined data object, as provided the in second argument to `view.spawn()`
 * `message.source` is the child view object that spawned or passed this message to this view.
 
-The `messageName` portion of the `onMessages` hash keys is matched against the name of the messages that are received. An asterix character `*` can be used as a wildcard in the `messageName` to match zero or more letters, numbers, or underscores. (If multiple entries match the message name, the most specific entry will "win", that is, the entry with the greatest number of non-wildcard characters will be used.)
+The `messageName` portion of the `onMessages` hash keys is matched against the name of the messages that are received.
 
-The `source` part of the hash key can be used to match only messages that come from a particular child view. The view reference is resolved using the override-able `view._getChildViewByName()` method. (Matching entries in the `onMessages` hash that have a `source` specified are always considered more specific than those that do not have any `source` specified.)
-
-The default implementation of `view._getChildViewByName()` expects that a hash of child views is kept in `view.subviews`, the keys of the hash being the names of the child views, and the values references to the child view objects themselves. This implementation fits together with the [Backbone.Subviews](https://github.com/dgbeck/backbone.subviews) view mixin, since the Backbone.Subviews mixin will automatically populate the `subviews` hash appropriately. You may override `view._getChildViewByName()` if you would like to provide an alternate means of mapping `source` to child view objects. 
+The `source` part of the hash key can be used to match only messages that come from a particular child view. This feature fits together naturally with the [Backbone.Subviews](https://github.com/dgbeck/backbone.subviews) view mixin. In order to map the `source` name to a particular child view, Backbone.Courier expects a hash of child views to be stored in `view.subviews`, the keys of the hash being the names of the child views, and the values references to the child view objects. This hash is setup automatically for you by the [Backbone.Subviews](Backbone.Subviews) mixin. (You may override `view._getChildViewByName()` if you would like to provide an alternate means of mapping the `source` name to child view objects.)
 
 ```javascript
 onMessages : {
@@ -141,7 +139,9 @@ _onResourceSelected : function( message ) {
 
 The `passMessages` hash can be used to pass messages received from a child view further up the view hierarchy, to potentially be handled by a more distant ancestor. Each entry in the hash has the format `{ "messageName source" : newMessage }`.
 
-The `messageName` and `source` parts of the hash key interpreted in exactly the same way as in the `onMessages` hash.
+The `messageName` and `source` parts of the hash key interpreted in exactly the same way as in the `onMessages` hash. 
+
+> Note: An asterix character `*` can be used in *both* the `passMessages` and `onMessages` hashes as a wildcard in the `messageName` to match zero or more letters, numbers, or underscores. If multiple entries match the message name, the most specific entry will "win", that is, the entry with the greatest number of non-wildcard characters will be used. (Matching entries that have a `source` specified are always considered more specific than those that do not have any `source` specified.)
 
 The value of `newMessage` determines the message that is passed to the view's parent. It is often desirable to add additional specificity to a message as it bubbles up to a new, larger context. For example, "selected" might become "resourceSelected" as it moves from a resource view to a larger parent view that contains resources as well as other items. Also, it is sometimes desirable to change some of the application defined data in `message.data`, either to add additional specificity or to remove data that should remain private to lower levels of the view hierarchy.
 
