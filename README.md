@@ -9,9 +9,8 @@ Easily bubble events ("messages") up your view hierarchy in your [Backbone.js](h
 * Makes it easy to modify messages as appropriate for larger contexts as they bubble up your view hierarchy.
 * Takes advantage of existing DOM tree to automatically infer view hierarchy structure (by default).
 * Allows child views to call specific functions on their parent views that return values, without explicit dependencies.
-* Provides option to enumerate the exact messages that are allowed to be emitted by each view.
+* Fits together with the [Backbone.Subviews](https://github.com/rotundasoftware/backbone.subviews) mixin so parents can easily act on messages from particular children.
 * Does not use event binding or explicit references so there is no cleanup necessary when views are removed.
-* Fits together with the [Backbone.Subviews](https://github.com/rotundasoftware/backbone.subviews) view mixin so parents can easily respond to messages from particular children.
 
 ## How it works
 
