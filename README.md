@@ -88,7 +88,7 @@ MyViewClass = Backbone.View.extend( {
 * view.passMessages - (hash) declare which messages are passed on by this view
 * view.spawnMessages - (hash) spawn messages automatically from DOM events
 
-### <a id="add"></a>Backbone.Courier.add( view )
+### <a name="add"></a>Backbone.Courier.add( view )
 
 Adds courier methods and behavior, as described below, to the view object referenced by the argument.
 
