@@ -162,7 +162,6 @@ The `messageName` and `source` parts of the hash key interpreted in exactly the 
 > specified are always considered more specific than those that do not have any `source` specified.)
 
 The value of `newMessage` determines the message that is passed to the view's parent. It is often desirable to change a message slightly as it bubbles up to a new, larger context. For example, "selected" might become "resourceSelected" as it moves from a resource view to a larger parent view that contains resources as well as other items. Also, it is sometimes desirable to change some of the application defined data in `message.data`, either to add additional data or to remove data that should remain private to lower levels of the view hierarchy.
-
 * If you do not want to change the message at all before passing it up the hierarchy, specify the string `"."` (a single period) as the value for `newMessage`.
 * If you would like to change the name of the message, but keep the application defined data the same, specify the new name for the message as the value for `newMessage`.
 * If you would like to change the application defined data in the message, specify a direct function body for the value of `newMessage`. The function will be called with two arguments. The first is the message object, with an empty object `{}` as its `message.data` property. The second argument will be the old application defined data, that is, the data passed up by the child view. You can also change the name of the message by setting `message.name`.
