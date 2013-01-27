@@ -107,8 +107,8 @@ The `onMessages` hash is the means by which a parent view can take action on, or
 
 <ul>
 <li>The <code>messageName</code> portion is matched against the name of the messages that are received.</li>
-<li>The <code>source</code> portion can be used to match only messages that come from a particular child view. This feature fits together seamlessly with the <a href="https://github.com/rotundasoftware/backbone.subviews">Backbone.Subviews</a> view mixin, because in order to map the <code>source</code> name to a particular child view, Backbone.Courier expects a hash of child views to be stored in <code>view.subviews</code> (the keys of the hash being the names of the child views, and the values references to the child view objects). This hash is setup automatically for you by the <a href="Backbone.Subviews">Backbone.Subviews</a> mixin. (You may override <code>view._getChildViewByName()</code> if you would like to provide an alternate means of mapping the <code>source</code> portion to child view objects.)</li>
-<li>The callback determines what is done when a matching message is received. Just like Backbone's events hash, you can either provide the callback as the name of a method on the view, or a direct function body. In either case, the message object is provided as the sole argument for the callback function. The message object always contains exactly three properties:
+<li>The <code>source</code> portion can be used to match only messages that come from a particular child view. This feature fits together with the <a href="https://github.com/rotundasoftware/backbone.subviews">Backbone.Subviews</a> view mixin, because in order to map the <code>source</code> name to a particular child view, Backbone.Courier expects a hash of child views to be stored in <code>view.subviews</code> (the keys of the hash being the names of the child views, and the values references to the child view objects). This hash is setup automatically for you by the <a href="Backbone.Subviews">Backbone.Subviews</a> mixin. (You may override <code>view._getChildViewByName()</code> if you would like to provide an alternate means of mapping the <code>source</code> portion to child view objects.)</li>
+<li>The "callback" portion determines what is done when a matching message is received. Just like Backbone's events hash, you can either provide the callback as the name of a method on the view, or a direct function body. In either case, the message object is provided as the sole argument for the callback function. The message object always contains exactly three properties:
 <ol>
 <li><code>message.name</code> is the name of the message</li>
 <li><code>message.data</code> is an application defined data object, as provided the in second argument to <code>view.spawn()</code></li>
@@ -158,8 +158,7 @@ The `messageName` and `source` parts of the hash key interpreted in exactly the 
 > Note: An asterix character `*` can be used in both the `passMessages` and `onMessages` hashes as a
 > wildcard in the `messageName` to match zero or more letters, numbers, or underscores. If multiple
 > entries match the message name, the most specific entry will "win", that is, the entry with the
-> greatest number of non-wildcard characters will be used. (Matching entries that have a `source`
-> specified are always considered more specific than those that do not have any `source` specified.)
+> greatest number of non-wildcard characters will be used.
 
 The value of `newMessage` determines the message that is passed to the view's parent. It is often desirable to change a message slightly as it bubbles up to a new, larger context. For example, "selected" might become "resourceSelected" as it moves from a resource view to a larger parent view that contains resources as well as other items. Also, it is sometimes desirable to change some of the application defined data in `message.data`, either to add additional data or to remove data that should remain private to lower levels of the view hierarchy.
 * If you do not want to change the message at all before passing it up the hierarchy, specify the string `"."` (a single period) as the value for `newMessage`.
@@ -200,7 +199,7 @@ Note that in all cases, when a message is passed, `message.source` is overwritte
 
 ```javascript
 spawnMessages : {
-	// spawn the leftLabelClicked message when a click event
+	// spawn the "leftLabelClicked" message when a click event
 	// occurs in the element matching selector div.left.label
 	"click div.left.label" : "leftLabelClicked",
 
@@ -219,7 +218,9 @@ The following methods may be overridden to customize Backbone.Courier for your e
 
 ### view._getParentView()
 
-`view._getParentView()` is an internal method that returns a view's "parent view". You may supply your own version of this method on your view objects (which will override the default implementation) if you want to provide a custom means to determine a view's parent. The default implementation determines a view's parent by its position in the DOM tree, scanning the tree for the closest parent that has a Backbone view in $( el ).data( "view" ). This data value is set on each view's element automatically by Backbone.Courier. Note the default implementation depends on jQuery's or Zepto's $.parent() and $.data() methods - the only hard dependency on a DOM library or tree in Backbone.Courier.
+`view._getParentView()` is an internal method that returns a view's "parent view". You may supply your own version of this method on your view objects (which will override the default implementation) if you want to provide a custom means to determine a view's parent. The default implementation determines a view's parent by its position in the DOM tree, scanning the tree for the closest parent that has a Backbone view in $( el ).data( "view" ). This data value is set on each view's DOM element automatically by Backbone.Courier.
+
+> Note: The default implementation of '_getParentView' depends on jQuery's or Zepto's `$.parent()` and `$.data()` methods - this is the only dependency on a DOM library or tree in Backbone.Courier.
 
 ### view._getChildViewByName( childViewName )
 
@@ -254,7 +255,7 @@ _valueFld_onKeyUp : function() {
 ## Dependencies
 
 * Backbone.js (tested with v0.9.9, untested with earlier versions)
-* jQuery or Zepto. You can eliminate this dependency by overriding `view._getParentView()` and providing an alternate means to determine view hierarchy that does not rely on the $.parent() and $.data() functions.
+* jQuery or Zepto. You can eliminate this dependency by overriding `view._getParentView()` and providing an alternate means to determine view hierarchy that does not rely on the `$.parent()` and `$.data()` functions.
 
 ## Feedback and bug reports
 
