@@ -157,7 +157,7 @@ _onResourceSelected : function( message ) {
 
 ### <a name="passMessages"></a>View.passMessages
 
-The `passMessages` is used to pass messages received from a child view further up the view hierarchy, to potentially be handled by a more distant ancestor. Each entry in the hash has the format:
+The `passMessages` hash is used to pass messages received from a child view further up the view hierarchy, to potentially be handled by a more distant ancestor. Each entry in the hash has the format:
 
 	"messageName source" : newMessage
 
