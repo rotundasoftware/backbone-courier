@@ -82,7 +82,7 @@ MyViewClass = Backbone.View.extend( {
 
 ### Public API quick reference
 
-* [Backbone.Courier.add( view )]() - add courier functionality to view
+* [Backbone.Courier.add( view )](#view.spawn(-messageName,-[data]-)) - add courier functionality to view
 * view.spawn( messageName, [data] ) - spawn a message to pass up view hierarchy
 * view.onMessages - (hash) declare which messages are handed by this view
 * view.passMessages - (hash) declare which messages are passed on by this view
