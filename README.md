@@ -220,7 +220,7 @@ The following methods may be overridden to customize Backbone.Courier for your e
 
 `view._getParentView()` is an internal method that returns a view's "parent view". You may supply your own version of this method on your view objects (which will override the default implementation) if you want to provide a custom means to determine a view's parent. The default implementation determines a view's parent by its position in the DOM tree, scanning the tree for the closest parent that has a Backbone view in $( el ).data( "view" ). This data value is set on each view's DOM element automatically by Backbone.Courier.
 
-> Note: The default implementation of '_getParentView' depends on jQuery's or Zepto's `$.parent()` and `$.data()` methods &mdash; the only dependency on a DOM library or tree in Backbone.Courier.
+> Note: The default implementation of '_getParentView' depends on jQuery's or Zepto's `$.parent()` and `$.data()` methods.
 
 ### view._getChildViewByName( childViewName )
 
