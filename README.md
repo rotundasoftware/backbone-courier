@@ -153,11 +153,11 @@ The `passMessages` hash can be used to pass messages received from a child view 
 
 The `messageName` and `source` parts of the hash key interpreted in exactly the same way as in the `onMessages` hash. 
 
-   > Note: An asterix character `*` can be used in both the `passMessages` and `onMessages` hashes as a
-   > wildcard in the `messageName` to match zero or more letters, numbers, or underscores. If multiple
-   > entries match the message name, the most specific entry will "win", that is, the entry with the
-   > greatest number of non-wildcard characters will be used. (Matching entries that have a `source`
-   > specified are always considered more specific than those that do not have any `source` specified.)
+&nbsp;&nbsp;&nbsp;Note: An asterix character `*` can be used in both the `passMessages` and `onMessages` hashes as a
+&nbsp;&nbsp;&nbsp;wildcard in the `messageName` to match zero or more letters, numbers, or underscores. If multiple
+&nbsp;&nbsp;&nbsp;entries match the message name, the most specific entry will "win", that is, the entry with the
+&nbsp;&nbsp;&nbsp;greatest number of non-wildcard characters will be used. (Matching entries that have a `source`
+&nbsp;&nbsp;&nbsp;specified are always considered more specific than those that do not have any `source` specified.)
 
 The value of `newMessage` determines the message that is passed to the view's parent. It is often desirable to add additional specificity to a message as it bubbles up to a new, larger context. For example, "selected" might become "resourceSelected" as it moves from a resource view to a larger parent view that contains resources as well as other items. Also, it is sometimes desirable to change some of the application defined data in `message.data`, either to add additional specificity or to remove data that should remain private to lower levels of the view hierarchy.
 
