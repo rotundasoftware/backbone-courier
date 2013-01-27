@@ -1,10 +1,10 @@
 
 # Backbone.Courier
 
-Easily bubble events ("messages") up your view hierarchy in your [Backbone.js](http://backbonejs.org/) applications.
+Easily bubble events ("messages") up your view hierarchy in your [Backbone.js](http://backbonejs.org/) applications. An intuitive approach to inter-view communication free of explicit dependencies.
 
 ## Benefits
-* Provides an easy to use message path through which views can communicate up (and down) your view hierarchy.
+* Creates an easy to use message path through which views can communicate up (and down) your view hierarchy.
 * Is designed to promote encapsulation of concerns, and does not rely on the use of application globals.
 * Makes it easy to modify messages as appropriate for larger contexts as they bubble up your view hierarchy.
 * Takes advantage of existing DOM tree to automatically infer view hierarchy structure (by default).
