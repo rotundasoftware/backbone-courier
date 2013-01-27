@@ -83,8 +83,8 @@ MyViewClass = Backbone.View.extend( {
 
 * [Backbone.Courier.add( view )](#add) - add courier functionality to view
 * [View.spawn( messageName, [data] )](#spawn) - spawn a message to pass up the view hierarchy
-* [View.onMessages](#onMessages) - (hash) determines how received messages are handled by a view
-* [View.passMessages](#passMessages) - (hash) determine how / which messages are passed to the parent view
+* [View.onMessages](#onMessages) - (hash) determines how messages from child views are handled
+* [View.passMessages](#passMessages) - (hash) determine how / which messages are passed on to the parent view
 * [View.spawnMessages](#spawnMessages) - (hash) spawn messages automatically from DOM events
 
 ### <a name="add"></a>Backbone.Courier.add( view )
