@@ -79,7 +79,7 @@ MyViewClass = Backbone.View.extend( {
 
 ## Methods and Property reference
 
-### Public API overview
+### Public API index
 
 * [Backbone.Courier.add( view )](#add) - add courier functionality to view
 * [View.spawn( messageName, [data] )](#spawn) - spawn a message to pass up the view hierarchy
