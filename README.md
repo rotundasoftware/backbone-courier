@@ -115,7 +115,7 @@ The `onMessages` hash is the means by which a parent view can take action on, or
 
 <ul>
 <li>The <code>messageName</code> portion is matched against the name of the messages that are received.</li>
-<li>The <code>source</code> portion can be used to match only messages that come from a particular child view. This feature fits together with the <a href="https://github.com/rotundasoftware/backbone.subviews">Backbone.Subviews</a> view mixin, because in order to map the <code>source</code> name to a particular child view, Backbone.Courier expects a hash of child views to be stored in <code>view.subviews</code> (the keys of the hash being the names of the child views, and the values references to the child view objects). This hash is setup automatically for you by the <a href="Backbone.Subviews">Backbone.Subviews</a> mixin. (You may override <code>View._getChildViewByName()</code> if you would like to provide an alternate means of mapping the <code>source</code> portion to child view objects.)</li>
+<li>The <code>source</code> portion can be used to match only messages that come from a particular child view. In order to map the <code>source</code> name to a particular child view, by default Backbone.Courier expects a hash of child views to be stored in <code>view.subviews</code> (the keys of the hash being the names of the child views, and the values references to the child view objects). You can either maintain this hash yourself, or use the <a href="Backbone.Subviews">Backbone.Subviews</a> mixin to maintain it for you automatically. Alternatively, you may override <code>View._getChildViewByName()</code> if you would like to provide an alternate means of mapping the <code>source</code> portion to child view objects.)</li>
 <li>The "callback" portion determines what is done when a matching message is received. Just like Backbone's events hash, you can either provide the callback as the name of a method on the view, or a direct function body. In either case, the message object is provided as the sole argument for the callback function. The message object always contains exactly three properties:
 <ol>
 <li><code>message.name</code> is the name of the message</li>
@@ -157,7 +157,7 @@ _onResourceSelected : function( message ) {
 
 ### <a name="passMessages"></a>View.passMessages
 
-The `passMessages` hash can be used to pass messages received from a child view further up the view hierarchy, to potentially be handled by a more distant ancestor. Each entry in the hash has the format:
+The `passMessages` is used to pass messages received from a child view further up the view hierarchy, to potentially be handled by a more distant ancestor. Each entry in the hash has the format:
 
 	"messageName source" : newMessage
 
