@@ -1,13 +1,12 @@
 /*!
- * Backbone.Marionette.Courier, v0.5
+ * Backbone.Marionette.Courier, v0.5.1
  * Copyright (c)2013 Rotunda Software, LLC.
  * Distributed under MIT license
- * http://github.com/dgbeck/backbone.marionette.courier
+ * http://github.com/rotundasoftware/backbone.marionette.courier
 */
 (function( Backbone, _ ) {
 	var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 	var lastPossibleViewElement = _.isFunction( $ ) ? $( "body" )[0] : null;
-	var debugMode = true;
 
 	Backbone.Courier = {};
 
@@ -32,12 +31,6 @@
 			else if( _.isUndefined( message.name ) ) throw new Error( "Undefined message name." );
 
 			message.data = message.data || {};
-
-			if( this.allowedMessages && ! _.contains( this.allowedMessages, message.name ) )
-			{
-				if( debugMode ) console.log( this );
-				throw new Error( "This view can not spawn the message \"" + message.name + "\" because it is not white listed in its `allowedMessages` hash" );
-			}
 
 			var roundTripMessage = message.name[ message.name.length - 1 ] === "!";
 
@@ -84,15 +77,7 @@
 					}
 				}
 
-				if( messageShouldBePassed )
-				{
-					if( curParent.allowedMessages && ! _.contains( curParent.allowedMessages, message.name ) )
-					{
-						if( debugMode ) console.log( this );
-						throw new Error( "This view can not pass the message \"" + message.name + "\" because it is not white listed in its `allowedMessages` hash" );
-					}
-				}
-				else break; // if this message should not be passed, then we are done
+				if( ! messageShouldBePassed ) break; // if this message should not be passed, then we are done
 
 				message.source = curParent;
  				curParent = curParent._getParentView();
@@ -201,9 +186,6 @@
 
 		setupLinkFromViewsElementToView( view );
 		view.delegateEvents();
-
-		// allow view#allowedMessages to be a function in case we need to extend from super, etc
-		if( _.isFunction( view.allowedMessages ) ) view.allowedMessages = view.allowedMessages.call( view );
 
 		// ****************** Private Utility Functions ****************** 
 
