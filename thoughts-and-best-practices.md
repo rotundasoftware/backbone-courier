@@ -15,7 +15,7 @@ A well designed Backbone.js application tends to contain a lot of views. Some vi
 
 Views are unique in that they only trigger events that are listened to by other views. The view layer is on its "own plane" in this regard. (You are committing a severe design error if your models or collections are in any way aware of your view layer.) It is therefore acceptable to implement a simplified mechanism for inter-view interaction by leveraging another property unique to views: that they have a natural hierarchy, which is mirrored by their elements' positions in the DOM tree.
 
-### What rules should govern the interaction of views in the context of the hierarchy in the DOM tree?
+### What rules should govern the interaction of views in the context of the DOM tree?
 
 * As a matter of necessity, views already have explicit dependencies on their child views, since they themselves generally create and render their children. The easiest and most appropriate way for a view to interact with its children is to call methods on their child views.
 * In the interest of encapsulating concerns, views should never have any explicit dependencies on their surroundings or their environment. That is, they should not have any explicit dependencies on their ancestors or their siblings.
