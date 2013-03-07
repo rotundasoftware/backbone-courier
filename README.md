@@ -1,4 +1,3 @@
-
 # Backbone.Courier
 
 Easily bubble events ("messages") up your view hierarchy in your [Backbone.js](http://backbonejs.org/) applications.
@@ -84,7 +83,7 @@ MyViewClass = Backbone.View.extend( {
 * [Backbone.Courier.add( view )](#add) - add courier functionality to view
 * [View.spawn( messageName, [data] )](#spawn) - spawn a message to pass up the view hierarchy
 * [View.onMessages](#onMessages) - (hash) determines how messages from child views are handled
-* [View.passMessages](#passMessages) - (hash) determine how / which messages are passed on to the parent view
+* [View.passMessages](#passMessages) - (hash) determines how / which messages are passed on to the parent view
 * [View.spawnMessages](#spawnMessages) - (hash) spawn messages automatically from DOM events
 
 ---
