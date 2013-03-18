@@ -1,5 +1,5 @@
 /*!
- * Backbone.Marionette.Courier, v0.5.1
+ * Backbone.Marionette.Courier, v0.5.5
  * Copyright (c)2013 Rotunda Software, LLC.
  * Distributed under MIT license
  * http://github.com/rotundasoftware/backbone.marionette.courier
@@ -11,18 +11,18 @@
 	Backbone.Courier = {};
 
 	Backbone.Courier.add = function( view ) {
- 		var overriddenViewMethods = {
- 			delegateEvents : view.delegateEvents,
- 			setElement : view.setElement
- 		};
+		var overriddenViewMethods = {
+			delegateEvents : view.delegateEvents,
+			setElement : view.setElement
+		};
 
- 		// ****************** Public Courier functions ****************** 
- 
- 		view.spawn = function( message, data ) {
- 			// can be called with message argument as an object, in which case message.name is required,
- 			// or can be called with message as a string that represents the name of the message and
- 			// data object which will be added to message object at message.data
- 			if( _.isString( message ) )
+		// ****************** Public Courier functions ****************** 
+
+		view.spawn = function( message, data ) {
+			// can be called with message argument as an object, in which case message.name is required,
+			// or can be called with message as a string that represents the name of the message and
+			// data object which will be added to message object at message.data
+			if( _.isString( message ) )
 				message = {
 					name : message,
 					data : _.extend( {}, data ),
@@ -34,16 +34,18 @@
 
 			var roundTripMessage = message.name[ message.name.length - 1 ] === "!";
 
- 			var curParent = this._getParentView();
- 			var messageShouldBePassed;
- 			while( curParent )
- 			{
+			var curParent = this._getParentView();
+			var messageShouldBePassed;
+			var value;
+
+			while( curParent )
+			{
 				// check to see if curParent has an action to perform when this message is received.
- 				if( _.isObject( curParent.onMessages ) )
- 				{
-  					var value = getValueOfBestMatchingHashEntry( curParent.onMessages, message, curParent );
-  					if( value !== null )
-  					{
+				if( _.isObject( curParent.onMessages ) )
+				{
+					value = getValueOfBestMatchingHashEntry( curParent.onMessages, message, curParent );
+					if( value !== null )
+					{
 						var method = value;
 						if( ! _.isFunction( method ) ) method = curParent[ value ];
 						if( ! method ) throw new Error( "Method \"" + value + "\" does not exist" );
@@ -51,16 +53,16 @@
 						var returnValue = method.call( curParent, message );
 						if( roundTripMessage ) return returnValue;
 					}
- 				}
+				}
 
- 				messageShouldBePassed = false;
+				messageShouldBePassed = false;
 
 				// check to see if this message should be passed up a level
- 				if( _.isObject( curParent.passMessages ) )
- 				{
- 					var value = getValueOfBestMatchingHashEntry( curParent.passMessages, message, curParent );
+				if( _.isObject( curParent.passMessages ) )
+				{
+					value = getValueOfBestMatchingHashEntry( curParent.passMessages, message, curParent );
 					if( value !== null )
-  					{
+					{
 						if( value === "." )
 							; // noop - pass this message through exactly as-is
 						else if( _.isString( value ) )
@@ -75,25 +77,26 @@
 
 						messageShouldBePassed = true;
 					}
+					else if( roundTripMessage ) messageShouldBePassed = true; // round trip messages are passed up even if there is not an entry in the passMessages hash
 				}
 
 				if( ! messageShouldBePassed ) break; // if this message should not be passed, then we are done
 
 				message.source = curParent;
- 				curParent = curParent._getParentView();
- 			}
+				curParent = curParent._getParentView();
+			}
 
- 			if( roundTripMessage )
- 				throw new Error( "Round trip message \"" + message.name + "\" was not handled. All round trip messages must be handled." );
- 		};
+			if( roundTripMessage )
+				throw new Error( "Round trip message \"" + message.name + "\" was not handled. All round trip messages must be handled." );
+		};
 
- 		// supply your own _getParentView function on your view objects
- 		// if you would like to use custom means to determine a view's
- 		// "parent". The default means is to traverse the DOM tree and return
- 		// the closest parent element that has a view object attached in el.data( "view" )
- 		if( ! _.isFunction( view._getParentView ) )
-	 		view._getParentView = function() {
-	 			var parent = null;
+		// supply your own _getParentView function on your view objects
+		// if you would like to use custom means to determine a view's
+		// "parent". The default means is to traverse the DOM tree and return
+		// the closest parent element that has a view object attached in el.data( "view" )
+		if( ! _.isFunction( view._getParentView ) )
+			view._getParentView = function() {
+				var parent = null;
 				var curElement = this.$el.parent();
 				while( curElement.length > 0 && curElement[0] !== lastPossibleViewElement )
 				{
@@ -108,7 +111,7 @@
 				}
 
 				return parent;
-	 		};
+			};
 
 		// supply your own _getChildViewNamed function on your view objects
 		// if you would like to use another means to test the source of your
@@ -119,9 +122,9 @@
 			view._getChildViewNamed = function( childViewName ) {
 				if( ! _.isObject( this.subviews ) ) return null;
 				return this.subviews[ childViewName ];
-	 		};
+			};
 
- 		// ****************** Overridden Backbone.View functions ****************** 
+		// ****************** Overridden Backbone.View functions ****************** 
 
 		view.delegateEvents = function( events ) {
 			var _this = this;
@@ -170,7 +173,7 @@
 						// pass on arguments (event obj) supplied by DOM library
 						existingMethod.apply( this, arguments );
 						doSpawnFunction.apply( this, arguments );
-					}
+					};
 				}
 			} );
 
@@ -239,7 +242,7 @@
 				var eventNameRegEx = new RegExp( eventName.replace( "*", "[\\w]*" ) );
 				if( ! eventNameRegEx.test( message.name ) ) continue;
 
-				if( subviewName != "" && view._getChildViewNamed( subviewName ) !== message.source ) continue;
+				if( subviewName !== "" && view._getChildViewNamed( subviewName ) !== message.source ) continue;
 
 				matchingEntries.push( { eventName : eventName, subviewName : subviewName, value : hash[ key ] } );
 			}
@@ -263,5 +266,5 @@
 
 			return matchingEntries.length ? matchingEntries[0].value : null;
 		}
-	}
+	};
 })( Backbone, _ );
