@@ -77,8 +77,8 @@
 
 						messageShouldBePassed = true;
 					}
-					else if( roundTripMessage ) messageShouldBePassed = true; // round trip messages are passed up even if there is not an entry in the passMessages hash
 				}
+				else if( roundTripMessage ) messageShouldBePassed = true; // round trip messages are passed up even if there is not an entry in the passMessages hash
 
 				if( ! messageShouldBePassed ) break; // if this message should not be passed, then we are done
 
