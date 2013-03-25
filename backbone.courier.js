@@ -132,11 +132,11 @@
 			if( _.isFunction( this.events ) ) this.events = this.events.call( this.events );
 			events = events || _.clone( this.events ) || {};
 
-			events = expandUIBindingsInEventsHashKeys( events );
+			events = expandUIBindingsInEventsHashKeys.call( this, events );
 
 			// Allow `spawnMessages` to be configured as a function
 			var spawnMessages = _.result( this, "spawnMessages" ) || {};
-			spawnMessages = expandUIBindingsInEventsHashKeys( spawnMessages );
+			spawnMessages = expandUIBindingsInEventsHashKeys.call(this, spawnMessages );
 
 			// Create functions for auto-spawning of messages from spawnMessages,
 			// prevent default action and stop propagation of DOM events
@@ -206,7 +206,7 @@
 			if( ! uiBindings ) return hash;
 
 			var newHash = {};
-			_.each( events, function( value, key ) {
+			_.each( hash, function( value, key ) {
 				var match = key.match( delegateEventSplitter );
 				var eventName = match[ 1 ], uiElName = match[ 2 ];
 
