@@ -230,7 +230,7 @@ The following methods may be overridden to customize Backbone.Courier for your e
 
 > Note: The default implementation of '_getParentView' depends on jQuery's or Zepto's `$.parent()` and `$.data()` methods, which is the only dependency on a DOM library or tree in Backbone.Courier.
 
-### View._getChildViewByNamed( childViewName )
+### View._getChildViewNamed( childViewName )
 
 `View._getChildViewNamed( childViewName )` is an internal method that is used to resolve the child view names optionally supplied in the `source` part of the `onMessages` and `passMessages` hash. You may supply your own version of this method on your view objects in order to store child views in a location other than the default `view.subviews[ childViewName ]`.
 
