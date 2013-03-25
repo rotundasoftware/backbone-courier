@@ -96,10 +96,102 @@ $(document).ready(function() {
 
 				this.grandparentView = new Backbone.View({el : $grandparent});
 				Backbone.Courier.add(this.grandparentView);
+
 				this.parentView = new Backbone.View({el : $parent});
+				this.parentView.subviews = {};
 				Backbone.Courier.add(this.parentView);
+
 				this.childView = new Backbone.View({el : $child});
 				Backbone.Courier.add(this.childView);
+				this.parentView.subviews['child1'] = this.childView;
+
+				this.childView2 = new Backbone.View({el : $child2});
+				this.parentView.subviews['child2'] = this.childView2;
+				Backbone.Courier.add(this.childView2);
+
+/*
+				this.parentView._getChildViewNamed = function(childViewName) {
+
+					if( childViewName === 'child1' ) {
+						return _this.childView;
+					}
+					else if( childViewName === 'child2' ) {
+						return _this.childView2;
+					}
+					else {
+						throw new Error('Unknown view name: ' + childViewName);
+					}
+				};
+*/
+
+			}
+		}
+	);
+
+
+//Begin: onMessages tests to be reused for both the build-in subviews hash and the _getChildViewNamed function
+	var handleMessageFromChild = function () {
+
+		this.parentView.onMessages = {
+			"message1 child1" : function(message) {
+				ok('Heard message from child1');
+			},
+			"message1 child2" : function(message) {
+				ok(false,"Should not have heard message1 from child2");
+			}
+		};
+
+		this.childView.spawn('message1');
+
+	};
+
+	var handleAnyMessageFromChild = function () {
+
+		this.parentView.onMessages = {
+			"* child1" : function(message) {
+				ok('Heard message ' + message.name + ' from child1' );
+			},
+			"message1 child2" : function(message) {
+				ok(false,"Should not have heard message1 from child2");
+			}
+		};
+
+		this.childView.spawn('message1');
+		this.childView.spawn('message2');
+
+	};
+//End: Reused onMessages tests.
+
+
+	test('Handle a specific message from specific child (using built-in subviews hash)', 1, handleMessageFromChild);
+
+	test('Handle any message from specific child (using built-in subviews hash)', 2, handleAnyMessageFromChild);
+
+	module("View._getChildViewNamed",
+		{
+
+			setup: function() {
+
+				var _this = this;
+				var $fixture = $('#qunit-fixture');
+				$fixture.append('<div id="grandparent"></div>');
+				var $grandparent = $('#grandparent');
+				$grandparent.append('<div id="parent"></div>');
+				var $parent = $('#parent');
+				$parent.append('<div id="child"></div>');
+				var $child = $('#child');
+				$parent.append('<div id="child2"></div>');
+				var $child2 = $('#child2');
+
+				this.grandparentView = new Backbone.View({el : $grandparent});
+				Backbone.Courier.add(this.grandparentView);
+
+				this.parentView = new Backbone.View({el : $parent});
+				Backbone.Courier.add(this.parentView);
+
+				this.childView = new Backbone.View({el : $child});
+				Backbone.Courier.add(this.childView);
+
 				this.childView2 = new Backbone.View({el : $child2});
 				Backbone.Courier.add(this.childView2);
 
@@ -120,36 +212,10 @@ $(document).ready(function() {
 		}
 	);
 
-	test('Handle a specific message from specific child', 1, function() {
+	test('Handle a specific message from specific child (using _getChildViewNamed)', 1, handleMessageFromChild);
 
-		this.parentView.onMessages = {
-			"message1 child1" : function(message) {
-				ok('Heard message from child1');
-			},
-			"message1 child2" : function(message) {
-				ok(false,"Should not have heard message1 from child2");
-			}
-		};
+	test('Handle any message from specific child (using _getChildViewNamed)', 2, handleAnyMessageFromChild);
 
-		this.childView.spawn('message1');
-
-	});
-
-	test('Handle any message from specific child', 2, function() {
-
-		this.parentView.onMessages = {
-			"* child1" : function(message) {
-				ok('Heard message ' + message.name + ' from child1' );
-			},
-			"message1 child2" : function(message) {
-				ok(false,"Should not have heard message1 from child2");
-			}
-		};
-
-		this.childView.spawn('message1');
-		this.childView.spawn('message2');
-
-	});
 
 	module("View.passMessages",
 		{
@@ -330,6 +396,40 @@ $(document).ready(function() {
 		$('#button1').trigger('click');
 	});
 
+	asyncTest('Spawn message from button click using string in spawnMessages and a ui hash alias', 1, function() {
+
+		var ChildView = Backbone.View.extend({
+			ui : {
+				'formButton' : '#button1'
+			},
+			spawnMessages : {
+				'click formButton' : 'buttonClicked'
+			}
+		});
+
+		this.parentView.$el.append('<div id="child3"><input type="button" id="button1" value="Button 1"></input></div>');
+		var $child3 = $('#child3');
+
+		this.childView3 = new ChildView({ el : $child3 });
+		Backbone.Courier.add(this.childView3);
+
+		this.childView3.ui = 
+			{
+				'formButton' : '#button1'
+			};
+
+
+		this.parentView.onMessages = {
+			'buttonClicked' : function() {
+				start();
+				ok('Heard buttonClicked message');
+			}
+		};
+
+		$('#button1').trigger('click');
+	});
+
+
 	asyncTest('Spawn message from button click using function in spawnMessages', 2, function() {
 
 		var ChildView = Backbone.View.extend({
@@ -356,6 +456,5 @@ $(document).ready(function() {
 
 		$('#button1').trigger('click');
 	});
-
 
 });
