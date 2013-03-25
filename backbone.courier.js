@@ -1,5 +1,5 @@
 /*!
- * Backbone.Marionette.Courier, v0.5.5
+ * Backbone.Marionette.Courier, v0.5.6
  * Copyright (c)2013 Rotunda Software, LLC.
  * Distributed under MIT license
  * http://github.com/rotundasoftware/backbone.marionette.courier
