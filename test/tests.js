@@ -109,27 +109,12 @@ $(document).ready(function() {
 				this.parentView.subviews['child2'] = this.childView2;
 				Backbone.Courier.add(this.childView2);
 
-/*
-				this.parentView._getChildViewNamed = function(childViewName) {
-
-					if( childViewName === 'child1' ) {
-						return _this.childView;
-					}
-					else if( childViewName === 'child2' ) {
-						return _this.childView2;
-					}
-					else {
-						throw new Error('Unknown view name: ' + childViewName);
-					}
-				};
-*/
-
 			}
 		}
 	);
 
 
-//Begin: onMessages tests to be reused for both the build-in subviews hash and the _getChildViewNamed function
+//Begin: onMessages tests may be reused for both the build-in subviews hash and the _getChildViewNamed function
 	var handleMessageFromChild = function () {
 
 		this.parentView.onMessages = {
@@ -160,12 +145,47 @@ $(document).ready(function() {
 		this.childView.spawn('message2');
 
 	};
+
+
+	//This test tests the specificity of onMessage handlers with '*'.  If more than one handler matches, the most specific one (highest number of non-'*' characters, should be chosen as the handler.
+	var testMessageNameSpecificity = function () {
+
+		this.parentView.onMessages = {
+			"me* child1" : function(message) {
+				ok('Heard message ' + message.name + ' from child1' );
+			},
+			"* child1" : function(message) {
+				ok(false, 'This handler should not have heard message ' + message.name + ' from child1' );
+			}
+		};
+
+		this.childView.spawn('message1');
+
+		this.parentView.onMessages = {
+			"me* child1" : function(message) {
+				ok(false,'This handler should not have heard message ' + message.name + ' from child1' );
+			},
+			"* child1" : function(message) {
+				ok(false, 'This handler should not have heard message ' + message.name + ' from child1' );
+			},
+			"me*ag* child1" : function(message) {
+				ok('Heard message ' + message.name + ' from child1' );
+			}
+
+		};
+
+		this.childView.spawn('message1');
+
+	};
+
 //End: Reused onMessages tests.
 
 
 	test('Handle a specific message from specific child (using built-in subviews hash)', 1, handleMessageFromChild);
 
 	test('Handle any message from specific child (using built-in subviews hash)', 2, handleAnyMessageFromChild);
+
+	test('Testing message name specificity in onMessages hash when using "*"', 2, testMessageNameSpecificity);
 
 	module("View._getChildViewNamed",
 		{
