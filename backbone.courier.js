@@ -1,5 +1,5 @@
 /*!
- * Backbone.Marionette.Courier, v0.5.6
+ * Backbone.Marionette.Courier, v0.5.7
  * Copyright (c)2013 Rotunda Software, LLC.
  * Distributed under MIT license
  * http://github.com/rotundasoftware/backbone.marionette.courier
@@ -78,7 +78,8 @@
 						messageShouldBePassed = true;
 					}
 				}
-				else if( roundTripMessage ) messageShouldBePassed = true; // round trip messages are passed up even if there is not an entry in the passMessages hash
+
+				if( roundTripMessage ) messageShouldBePassed = true; // round trip messages are passed up even if there is not an entry in the passMessages hash
 
 				if( ! messageShouldBePassed ) break; // if this message should not be passed, then we are done
 
