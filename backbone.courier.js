@@ -25,11 +25,11 @@
 			if( _.isString( message ) )
 				message = {
 					name : message,
-					data : _.extend( {}, data ),
-					source : view
+					data : _.extend( {}, data )
 				};
 			else if( _.isUndefined( message.name ) ) throw new Error( "Undefined message name." );
 
+			message.source = view;
 			message.data = message.data || {};
 
 			var roundTripMessage = message.name[ message.name.length - 1 ] === "!";
@@ -145,13 +145,13 @@
 				var eventName = match[ 1 ], uiElName = match[ 2 ];
 
 				var doSpawnFunction = function( e ) {
-					if (e && e.preventDefault){ e.preventDefault(); }
-					if (e && e.stopPropagation){ e.stopPropagation(); }
+					if( e && e.preventDefault ){ e.preventDefault(); }
+					if( e && e.stopPropagation ){ e.stopPropagation(); }
 
 					var message;
 					if( _.isFunction( value ) )
 					{
-						message = { name : eventName, data : {} };
+						message = { name : eventName, data : {}, source : _this };
 						value.call( this, message, e );
 					}
 					else if( _.isString( value ) )

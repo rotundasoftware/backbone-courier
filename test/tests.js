@@ -383,10 +383,15 @@ $(document).ready(function() {
 				Backbone.Courier.add(this.grandparentView);
 				this.parentView = new Backbone.View({el : $parent});
 				Backbone.Courier.add(this.parentView);
+				this.parentView.subviews = {};
+
 				this.childView = new Backbone.View({el : $child});
 				Backbone.Courier.add(this.childView);
+				this.parentView.subviews['child1'] = this.childView;
+
 				this.childView2 = new Backbone.View({el : $child2});
 				Backbone.Courier.add(this.childView2);
+				this.parentView.subviews['child2'] = this.childView2;
 
 			}
 		}
@@ -466,9 +471,10 @@ $(document).ready(function() {
 
 		this.childView3 = new ChildView({ el : $child3 });
 		Backbone.Courier.add(this.childView3);
+		this.parentView.subviews['child3'] = this.childView3;
 
 		this.parentView.onMessages = {
-			'buttonClicked' : function() {
+			'buttonClicked child3' : function() {
 				start();
 				ok('Heard buttonClicked message');
 			}
