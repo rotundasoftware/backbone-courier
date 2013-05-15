@@ -1,12 +1,12 @@
-/*!
- * Backbone.Marionette.Courier, v0.5.5
+/*
+ * Backbone.Courier, v0.5.6
  * Copyright (c)2013 Rotunda Software, LLC.
  * Distributed under MIT license
- * http://github.com/rotundasoftware/backbone.marionette.courier
+ * http://github.com/rotundasoftware/backbone.courier
 */
 (function( Backbone, _ ) {
 	var delegateEventSplitter = /^(\S+)\s*(.*)$/;
-	var lastPossibleViewElement = _.isFunction( $ ) ? $( "body" )[0] : null;
+	var lastPossibleViewElement = _.isFunction( $ ) ? $( "body" )[ 0 ] : null;
 
 	Backbone.Courier = {};
 
@@ -32,43 +32,43 @@
 
 			message.data = message.data || {};
 
-			var roundTripMessage = message.name[ message.name.length - 1 ] === "!";
+			var isRoundTripMessage = message.name[ message.name.length - 1 ] === "!";
 
 			var curParent = this._getParentView();
 			var messageShouldBePassed;
 			var value;
 
-			while( curParent )
-			{
+			while( curParent ) {
 				// check to see if curParent has an action to perform when this message is received.
-				if( _.isObject( curParent.onMessages ) )
-				{
+				if( _.isObject( curParent.onMessages ) ) {
 					value = getValueOfBestMatchingHashEntry( curParent.onMessages, message, curParent );
-					if( value !== null )
-					{
+					if( value !== null ) {
 						var method = value;
 						if( ! _.isFunction( method ) ) method = curParent[ value ];
 						if( ! method ) throw new Error( "Method \"" + value + "\" does not exist" );
 
 						var returnValue = method.call( curParent, message );
-						if( roundTripMessage ) return returnValue;
+						if( isRoundTripMessage ) return returnValue;
 					}
 				}
 
 				messageShouldBePassed = false;
 
 				// check to see if this message should be passed up a level
-				if( _.isObject( curParent.passMessages ) )
-				{
+				if( _.isObject( curParent.passMessages ) ) {
 					value = getValueOfBestMatchingHashEntry( curParent.passMessages, message, curParent );
-					if( value !== null )
-					{
+					if( value !== null ) {
 						if( value === "." )
 							; // noop - pass this message through exactly as-is
-						else if( _.isString( value ) )
+						else if( _.isString( value ) ) {
+							// if value is a string, we pass the existing message but
+							// change the name to the supplied string
 							message.name = value;
-						else if( _.isFunction( value ) )
-						{
+						}
+						else if( _.isFunction( value ) ) {
+							// if value is a function, we call the function after clearing the
+							// message data, in order that it may modify the message as it sees
+							// fit (adding new data, changing the name), and then pass the message
 							var oldMessageData = message.data;
 							message.data = {};
 							value.call( curParent, message, oldMessageData );
@@ -77,16 +77,16 @@
 
 						messageShouldBePassed = true;
 					}
-					else if( roundTripMessage ) messageShouldBePassed = true; // round trip messages are passed up even if there is not an entry in the passMessages hash
+					else if( isRoundTripMessage ) messageShouldBePassed = true; // round trip messages are passed up even if there is not an entry in the passMessages hash
 				}
 
 				if( ! messageShouldBePassed ) break; // if this message should not be passed, then we are done
 
-				message.source = curParent;
+				message.source = curParent; // keep the source of the message current as the message bubbles up the view hierarchy
 				curParent = curParent._getParentView();
 			}
 
-			if( roundTripMessage )
+			if( isRoundTripMessage )
 				throw new Error( "Round trip message \"" + message.name + "\" was not handled. All round trip messages must be handled." );
 		};
 
@@ -98,11 +98,9 @@
 			view._getParentView = function() {
 				var parent = null;
 				var curElement = this.$el.parent();
-				while( curElement.length > 0 && curElement[0] !== lastPossibleViewElement )
-				{
+				while( curElement.length > 0 && curElement[0] !== lastPossibleViewElement ) {
 					var view = curElement.data( "view" );
-					if( view && view instanceof Backbone.View )
-					{
+					if( view && view instanceof Backbone.View ) {
 						parent = view;
 						break;
 					}
@@ -149,8 +147,7 @@
 					if (e && e.stopPropagation){ e.stopPropagation(); }
 
 					var message;
-					if( _.isFunction( value ) )
-					{
+					if( _.isFunction( value ) ) {
 						message = { name : eventName, data : {} };
 						value.call( this, message, e );
 					}
@@ -163,8 +160,7 @@
 
 				if( ! events[ key ] )
 					events[ key ] = doSpawnFunction;
-				else
-				{
+				else {
 					var existingMethod = events[ key ];
 					if( ! _.isFunction( existingMethod ) ) existingMethod = _this[ events[ key ] ];
 					if( ! existingMethod ) throw new Error( "Method \"" + events[key] + "\" does not exist" );
@@ -223,22 +219,21 @@
 
 		function getValueOfBestMatchingHashEntry( hash, message, view ) {
 			// return the value of the entry in a onMessages or passMessages hash that is the 
-			// "most specific" match for this message, or null, of there are no matches.
+			// "most specific" match for this message, or null, if there are no matches.
 
 			var matchingEntries = [];
 
-			for( var key in hash )
-			{
-				// We are looking for kyes in the hash that have `message` 
+			for( var key in hash ) {
+				// We are looking for keys in the hash that have the `message` argument
 				// as the first word of their key. If we find one, they either need
 				// no source qualifier as the second word of the key (in which case
 				// we will pass this message regardless of where it comes from),
 				// or we need this the name of the subview that is the source of the
 				// message second word of the key.
 
-				var match = key.match(delegateEventSplitter);
+				var match = key.match( delegateEventSplitter );
 
-				var eventName = match[1], subviewName = match[2];
+				var eventName = match[ 1 ], subviewName = match[ 2 ];
 				var eventNameRegEx = new RegExp( eventName.replace( "*", "[\\w]*" ) );
 				if( ! eventNameRegEx.test( message.name ) ) continue;
 
@@ -249,7 +244,7 @@
 
 			// if more than one hash keys match, order them by specificity, that is,
 			// in descending order of how many non-wild card characters they contain,
-			// so that entry with most specificity is at index 0. Also consider any
+			// so that entry with most specificity is at index 0. Also, consider any
 			// entries that have subview qualifier more specific than those that do not.
 			if( matchingEntries.length > 1 )
 				matchingEntries = _.sortBy( matchingEntries, function( thisEntry ) {
@@ -258,13 +253,13 @@
 
 					// promote all entries with subview qualifiers to a higher level of specificity.
 					// Figure there will never, ever be a 1000 character long event name
-					var specificity = (hasSubviewQualifier ? 1000 : 0) + nonWildcardCharactersInEventName.length;
+					var specificity = ( hasSubviewQualifier ? 1000 : 0 ) + nonWildcardCharactersInEventName.length;
 
 					// negate to sort in descending order
-					return (- specificity);
+					return( - specificity );
 				} );
 
-			return matchingEntries.length ? matchingEntries[0].value : null;
+			return matchingEntries.length ? matchingEntries[ 0 ].value : null;
 		}
 	};
 })( Backbone, _ );
