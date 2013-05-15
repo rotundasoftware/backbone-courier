@@ -1,5 +1,5 @@
 /*
- * Backbone.Courier, v0.5.6
+ * Backbone.Courier, v0.5.7
  * Copyright (c)2013 Rotunda Software, LLC.
  * Distributed under MIT license
  * http://github.com/rotundasoftware/backbone.courier
@@ -25,11 +25,11 @@
 			if( _.isString( message ) )
 				message = {
 					name : message,
-					data : _.extend( {}, data ),
-					source : view
+					data : _.extend( {}, data )
 				};
 			else if( _.isUndefined( message.name ) ) throw new Error( "Undefined message name." );
 
+			message.source = view;
 			message.data = message.data || {};
 
 			var isRoundTripMessage = message.name[ message.name.length - 1 ] === "!";
@@ -79,6 +79,8 @@
 					}
 					else if( isRoundTripMessage ) messageShouldBePassed = true; // round trip messages are passed up even if there is not an entry in the passMessages hash
 				}
+
+				if( isRoundTripMessage ) messageShouldBePassed = true; // round trip messages are passed up even if there is not an entry in the passMessages hash
 
 				if( ! messageShouldBePassed ) break; // if this message should not be passed, then we are done
 
@@ -130,11 +132,11 @@
 			if( _.isFunction( this.events ) ) this.events = this.events.call( this.events );
 			events = events || _.clone( this.events ) || {};
 
-			events = expandUIBindingsInEventsHashKeys( events );
+			events = expandUIBindingsInEventsHashKeys.call( this, events );
 
 			// Allow `spawnMessages` to be configured as a function
 			var spawnMessages = _.result( this, "spawnMessages" ) || {};
-			spawnMessages = expandUIBindingsInEventsHashKeys( spawnMessages );
+			spawnMessages = expandUIBindingsInEventsHashKeys.call(this, spawnMessages );
 
 			// Create functions for auto-spawning of messages from spawnMessages,
 			// prevent default action and stop propagation of DOM events
@@ -143,12 +145,13 @@
 				var eventName = match[ 1 ], uiElName = match[ 2 ];
 
 				var doSpawnFunction = function( e ) {
-					if (e && e.preventDefault){ e.preventDefault(); }
-					if (e && e.stopPropagation){ e.stopPropagation(); }
+					if( e && e.preventDefault ){ e.preventDefault(); }
+					if( e && e.stopPropagation ){ e.stopPropagation(); }
 
 					var message;
-					if( _.isFunction( value ) ) {
-						message = { name : eventName, data : {} };
+					if( _.isFunction( value ) )
+					{
+						message = { name : eventName, data : {}, source : _this };
 						value.call( this, message, e );
 					}
 					else if( _.isString( value ) )
@@ -202,7 +205,7 @@
 			if( ! uiBindings ) return hash;
 
 			var newHash = {};
-			_.each( events, function( value, key ) {
+			_.each( hash, function( value, key ) {
 				var match = key.match( delegateEventSplitter );
 				var eventName = match[ 1 ], uiElName = match[ 2 ];
 
