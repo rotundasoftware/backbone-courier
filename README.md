@@ -262,7 +262,7 @@ _valueFld_onKeyUp : function() {
 
 ## Dependencies
 
-* Backbone.js (tested with v0.9.9, untested with earlier versions)
+* Backbone.js (tested with v0.9.9 and later, untested with earlier versions)
 * jQuery or Zepto. You can eliminate this dependency by overriding `View._getParentView()` and providing an alternate means to determine view hierarchy that does not rely on the `$.parent()` and `$.data()` functions.
 
 ## Feedback and bug reports
