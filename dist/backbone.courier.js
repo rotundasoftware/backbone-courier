@@ -1,5 +1,5 @@
 /*
- * Backbone.Courier, v0.5.7
+ * Backbone.Courier, v0.5.8
  * Copyright (c)2013 Rotunda Software, LLC.
  * Distributed under MIT license
  * http://github.com/rotundasoftware/backbone.courier
@@ -252,7 +252,7 @@
 			if( matchingEntries.length > 1 )
 				matchingEntries = _.sortBy( matchingEntries, function( thisEntry ) {
 					var nonWildcardCharactersInEventName = thisEntry.eventName.replace( "*", "" );
-					var hasSubviewQualifier = subviewName !== "";
+					var hasSubviewQualifier = thisEntry.subviewName !== "";
 
 					// promote all entries with subview qualifiers to a higher level of specificity.
 					// Figure there will never, ever be a 1000 character long event name

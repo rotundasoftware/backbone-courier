@@ -246,7 +246,7 @@
 			if( matchingEntries.length > 1 )
 				matchingEntries = _.sortBy( matchingEntries, function( thisEntry ) {
 					var nonWildcardCharactersInEventName = thisEntry.eventName.replace( "*", "" );
-					var hasSubviewQualifier = subviewName !== "";
+					var hasSubviewQualifier = thisEntry.subviewName !== "";
 
 					// promote all entries with subview qualifiers to a higher level of specificity.
 					// Figure there will never, ever be a 1000 character long event name
