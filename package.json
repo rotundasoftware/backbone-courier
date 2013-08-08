@@ -1,6 +1,6 @@
 {
   "name": "Backbone.Courier",
-  "version": "0.5.8",
+  "version": "0.5.9",
   "main": "Gruntfile.js",
   "devDependencies": {
     "grunt": "~0.4.1",

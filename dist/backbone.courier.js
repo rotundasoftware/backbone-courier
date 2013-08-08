@@ -1,5 +1,5 @@
 /*
- * Backbone.Courier, v0.5.8
+ * Backbone.Courier, v0.5.9
  * Copyright (c)2013 Rotunda Software, LLC.
  * Distributed under MIT license
  * http://github.com/rotundasoftware/backbone.courier
@@ -54,6 +54,8 @@
 
 				messageShouldBePassed = false;
 
+				// execute `passMessages` if its configured as a function
+				var passMessages = _.result( curParent, "passMessages" );
 				// check to see if this message should be passed up a level
 				if( _.isObject( curParent.passMessages ) ) {
 					value = getValueOfBestMatchingHashEntry( curParent.passMessages, message, curParent );

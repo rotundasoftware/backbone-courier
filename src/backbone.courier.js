@@ -48,6 +48,8 @@
 
 				messageShouldBePassed = false;
 
+				// execute `passMessages` if its configured as a function
+				var passMessages = _.result( curParent, "passMessages" );
 				// check to see if this message should be passed up a level
 				if( _.isObject( curParent.passMessages ) ) {
 					value = getValueOfBestMatchingHashEntry( curParent.passMessages, message, curParent );
