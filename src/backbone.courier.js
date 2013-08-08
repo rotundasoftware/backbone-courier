@@ -51,8 +51,8 @@
 				// execute `passMessages` if its configured as a function
 				var passMessages = _.result( curParent, "passMessages" );
 				// check to see if this message should be passed up a level
-				if( _.isObject( curParent.passMessages ) ) {
-					value = getValueOfBestMatchingHashEntry( curParent.passMessages, message, curParent );
+				if( _.isObject( passMessages ) ) {
+					value = getValueOfBestMatchingHashEntry( passMessages, message, curParent );
 					if( value !== null ) {
 						if( value === "." )
 							; // noop - pass this message through exactly as-is
