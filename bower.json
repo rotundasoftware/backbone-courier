@@ -1,0 +1,22 @@
+{
+	"name": "backbone.courier",
+	"version": "0.5.9",
+	"homepage": "https://github.com/rotundasoftware/backbone.courier",
+	"authors": [
+		"David Beck <david@rotundasoftware.com>"
+	],
+	"description": "Easily bubble events up your view hierarchy in your Backbone.js applications.",
+	"main": "dist/backbone.courier.js",
+	"keywords": [
+		"backbone",
+		"events",
+		"event",
+		"views",
+		"view"
+	],
+	"license": "MIT",
+	"dependencies" : {
+		"backbone" : "~0.9",
+		"jquery" : "~1.10"
+	}
+}
