@@ -94,11 +94,13 @@
 		// the closest parent element that has a view object attached in el.data( "view" )
 		if( ! _.isFunction( view._getParentView ) )
 			view._getParentView = function() {
-				var parent = null;
-				var curElement = this.$el.parent();
+				var parent = null,
+					curElement = this.$el.parent(),
+					hasMarionette = (typeof Marionette != "undefined");
+
 				while( curElement.length > 0 && curElement[0] !== lastPossibleViewElement ) {
 					var view = curElement.data( "view" );
-					if( view && view instanceof Backbone.View ) {
+					if (view && (view instanceof Backbone.View || (hasMarionette && view instanceof Marionette.View))) {
 						parent = view;
 						break;
 					}
