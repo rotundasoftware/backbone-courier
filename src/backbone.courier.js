@@ -98,7 +98,7 @@
 				var curElement = this.$el.parent();
 				while( curElement.length > 0 && curElement[0] !== lastPossibleViewElement ) {
 					var view = curElement.data( "view" );
-					if( view && view instanceof Backbone.View ) {
+					if( view && view.el ) {
 						parent = view;
 						break;
 					}

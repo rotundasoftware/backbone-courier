@@ -1,7 +1,7 @@
 {
-  "name": "Backbone.Courier",
+  "name": "backbone-courier",
   "version": "0.5.10",
-  "main": "Gruntfile.js",
+  "main": "dist/backbone.courier.js",
   "devDependencies": {
     "grunt": "~0.4.1",
     "grunt-contrib-concat": "~0.2.0",
