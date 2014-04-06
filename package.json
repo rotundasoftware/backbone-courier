@@ -1,6 +1,6 @@
 {
   "name": "backbone-courier",
-  "version": "0.5.10",
+  "version": "0.5.11",
   "main": "dist/backbone.courier.js",
   "devDependencies": {
     "grunt": "~0.4.1",
