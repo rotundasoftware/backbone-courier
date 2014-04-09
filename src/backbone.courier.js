@@ -18,7 +18,6 @@
 
 	Backbone.Courier.add = function( view ) {
 		var overriddenViewMethods = {
-			delegateEvents : view.delegateEvents,
 			setElement : view.setElement
 		};
 
@@ -81,7 +80,7 @@
 							message.data = {};
 							value.call( curParent, message, oldMessageData );
 						}
-						else throw new TypeError();
+						else throw new TypeError( "Values of passMessages hash should be strings or functions." );
 
 						messageShouldBePassed = true;
 					}
@@ -134,60 +133,6 @@
 
 		// ****************** Overridden Backbone.View functions ****************** 
 
-		view.delegateEvents = function( events ) {
-			var _this = this;
-
-			if( _.isFunction( this.events ) ) this.events = this.events.call( this.events );
-			events = events || _.clone( this.events ) || {};
-
-			var spawnMessages = _.result( this, "spawnMessages" ) || {};
-
-			if( _.isFunction( this._exapandUIHandlesInHash ) ) {
-				// support for bacbone.handle ui handles (http://github.com/rotundasoftware/backbone.handle)
-				spawnMessages = this._exapandUIHandlesInHash( spawnMessages );
-			}
-
-			// Create functions for auto-spawning of messages from spawnMessages,
-			// prevent default action and stop propagation of DOM events
-			_.each( spawnMessages, function( value, key ) {
-				var match = key.match( delegateEventSplitter );
-				var eventName = match[ 1 ], uiElName = match[ 2 ];
-
-				var doSpawnFunction = function( e ) {
-					if( e && e.preventDefault ){ e.preventDefault(); }
-					if( e && e.stopPropagation ){ e.stopPropagation(); }
-
-					var message;
-					if( _.isFunction( value ) )
-					{
-						message = { name : eventName, data : {}, source : _this };
-						value.call( this, message, e );
-					}
-					else if( _.isString( value ) )
-						message = value;
-					else throw new TypeError();
-
-					this.spawn( message );
-				};
-
-				if( ! events[ key ] )
-					events[ key ] = doSpawnFunction;
-				else {
-					var existingMethod = events[ key ];
-					if( ! _.isFunction( existingMethod ) ) existingMethod = _this[ events[ key ] ];
-					if( ! existingMethod ) throw new Error( "Method \"" + events[key] + "\" does not exist" );
-
-					events[ key ] = function() {
-						// pass on arguments (event obj) supplied by DOM library
-						existingMethod.apply( this, arguments );
-						doSpawnFunction.apply( this, arguments );
-					};
-				}
-			} );
-
-			overriddenViewMethods.delegateEvents.call( this, events );
-		};
-
 		view.setElement = function( element, delegate ) {
 			overriddenViewMethods.setElement.call( this, element, delegate );
 			prepareViewElement( view );
@@ -202,8 +147,6 @@
 		function prepareViewElement( view ) {
 			// store a reference to the view object in the DOM element's jQuery data. Make sure it is supported.
 			if( _.isFunction( view.$el.data ) && ! view.$el.data( "view" ) ) view.$el.data( "view", view );
-
-			view.delegateEvents();
 		}
 
 		function getValueOfBestMatchingHashEntry( hash, message, view ) {

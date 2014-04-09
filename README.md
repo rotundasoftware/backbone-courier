@@ -83,7 +83,6 @@ MyViewClass = Backbone.View.extend( {
 * [View.spawn( messageName, [data] )](#spawn) - spawn a message to pass up the view hierarchy
 * [View.onMessages](#onMessages) - (hash) determines how messages from child views are handled
 * [View.passMessages](#passMessages) - (hash) determines how / which messages are passed on to the parent view
-* [View.spawnMessages](#spawnMessages) - (hash) spawn messages automatically from DOM events
 
 ---
 
@@ -200,25 +199,6 @@ passMessages : {
 
 Note that in all cases, when a message is passed, `message.source` is overwritten and set to the view that is passing the message. If you require a reference to the object that originally spawned the message, you will need to keep that in `message.data` as the message bubbles up the hierarchy.
 
-### <a name="spawnMessages"></a>View.spawnMessages
-
-`view.spawnMessages` is a convenience hash that facilitates spawning messages when DOM events occur within the view's DOM element. The keys of this hash take the same format as the keys in [Backbone's events hash](http://backbonejs.org/#View-delegateEvents). If the value of an entry is a string, a message is spawned with that name. You can also provide a function body as the value of an entry to spawn a message that contains application defined data. The function will be passed two parameters, the first being the message that will be spawned, and the second being the event object as provided by the DOM library.
-
-```javascript
-spawnMessages : {
-	// spawn the "leftLabelClicked" message when a click event
-	// occurs in the element matching selector div.left.label
-	"click div.left.label" : "leftLabelClicked",
-
-	"focus input[type='text']" : function( message, e ) {
-		message.name = "inputFocused";
-		message.data.initialValue = $( "input[type='text']" ).val();
-	}
-}
-```
-
-Like many of the build in Backbone.js hashes, `spawnMessages` can also be supplied as a function that returns a hash.
-
 ## Internal view methods that may be overridden
 
 The following methods may be overridden to customize Backbone.Courier for your environment. To override one of the methods, attach your own version of the method to your view objects either before or after calling Backbone.Courier.add().
@@ -233,32 +213,6 @@ The following methods may be overridden to customize Backbone.Courier for your e
 
 `View._getChildViewNamed( childViewName )` is an internal method that is used to resolve the child view names optionally supplied in the `source` part of the `onMessages` and `passMessages` hash. You may supply your own version of this method on your view objects in order to store child views in a location other than the default `view.subviews[ childViewName ]`.
 
-## Bonus for Backbone.Marionette users
-
-If you are using [Backbone.Marionette](https://github.com/marionettejs/backbone.marionette), you can reuse the aliases defined in the `ui` hash in your `spawnMessages` hash, and even in your `events` hash, so that you do not have to repeat the same selectors between the various hashes. For example:
-
-```javascript
-// Backbone.Marionette's ui hash
-ui : {
-	"valueFld" : "[name='value']"
-}
-
-// valueFld is equivalent to [name='value']
-spawnMessages : {
-	"focus valueFld" : "focus",
-	"change valueFld" : "change"
-},
-
-// you can even use aliases in events hash. this is a free-bee for consistency
-events : {
-	"keyup valueFld" : "_valueFld_onKeyUp"
-},
-
-_valueFld_onKeyUp : function() {
-	// handle keyup event from element matching selector "[name='value']"
-}
-```
-
 ## Dependencies
 
 * Backbone.js (tested with v0.9.9 and later, untested with earlier versions)
@@ -269,5 +223,4 @@ _valueFld_onKeyUp : function() {
 #### v0.6.0
 
 * Added UMD wrapper.
-* Depreciated `spawnMessages` hash.
-* Depreciated `.` option in `passMessages` hash to pass a message through verbatim.
+* Removed `spawnMessages` hash.
