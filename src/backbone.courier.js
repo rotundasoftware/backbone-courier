@@ -1,4 +1,16 @@
-(function( Backbone, _ ) {
+( function( root, factory ) {
+	// UMD wrapper.
+	if ( typeof define === 'function' && define.amd ) {
+		// AMD
+		define( [ 'underscore', 'backbone', 'jquery' ], factory );
+	} else if ( typeof exports !== 'undefined' ) {
+		// Node/CommonJS
+		module.exports = factory( require('underscore' ), require( 'backbone' ), require( 'backbone' ).$ );
+	} else {
+		// Browser globals
+		factory( root._, root.Backbone, ( root.jQuery || root.Zepto || root.$ ) );
+	}
+}( this, function( _, Backbone, $ ) {
 	var delegateEventSplitter = /^(\S+)\s*(.*)$/;
 	var lastPossibleViewElement = _.isFunction( $ ) ? $( "body" )[ 0 ] : null;
 
@@ -12,7 +24,7 @@
 
 		// ****************** Public Courier functions ****************** 
 
-		view.spawn = function( message, data ) {
+		view.spawn = function( message, data, trigger ) {
 			// can be called with message argument as an object, in which case message.name is required,
 			// or can be called with message as a string that represents the name of the message and
 			// data object which will be added to message object at message.data
@@ -98,7 +110,7 @@
 				var curElement = this.$el.parent();
 				while( curElement.length > 0 && curElement[0] !== lastPossibleViewElement ) {
 					var view = curElement.data( "view" );
-					if( view && view.el ) {
+					if( view && view instanceof Backbone.View ) {
 						parent = view;
 						break;
 					}
@@ -128,11 +140,12 @@
 			if( _.isFunction( this.events ) ) this.events = this.events.call( this.events );
 			events = events || _.clone( this.events ) || {};
 
-			events = expandUIBindingsInEventsHashKeys.call( this, events );
-
-			// Allow `spawnMessages` to be configured as a function
 			var spawnMessages = _.result( this, "spawnMessages" ) || {};
-			spawnMessages = expandUIBindingsInEventsHashKeys.call(this, spawnMessages );
+
+			if( _.isFunction( this._exapandUIHandlesInHash ) ) {
+				// support for bacbone.handle ui handles (http://github.com/rotundasoftware/backbone.handle)
+				spawnMessages = this._exapandUIHandlesInHash( spawnMessages );
+			}
 
 			// Create functions for auto-spawning of messages from spawnMessages,
 			// prevent default action and stop propagation of DOM events
@@ -175,45 +188,22 @@
 			overriddenViewMethods.delegateEvents.call( this, events );
 		};
 
-		view.setElement = function(element, delegate) {
+		view.setElement = function( element, delegate ) {
 			overriddenViewMethods.setElement.call( this, element, delegate );
-			setupLinkFromViewsElementToView( view );
-		},
+			prepareViewElement( view );
+		};
 
 		// ****************** Body of Backbone.Courier.add() function ****************** 
 
-		setupLinkFromViewsElementToView( view );
-		view.delegateEvents();
+		if( this.el ) prepareViewElement( view ); // otherwise this will be done when #setElement is called
 
 		// ****************** Private Utility Functions ****************** 
 
-		function setupLinkFromViewsElementToView( view ) {
+		function prepareViewElement( view ) {
 			// store a reference to the view object in the DOM element's jQuery data. Make sure it is supported.
 			if( _.isFunction( view.$el.data ) && ! view.$el.data( "view" ) ) view.$el.data( "view", view );
-		}
 
-		function expandUIBindingsInEventsHashKeys( hash ) {
-			// Returns a copy of hash with any "aliases" for DOM element selectors found
-			// in the keys of the hash expanded to their selector equivalents. The aliases
-			// are setup from the Backbone.Marionette UI hash.
-
-			var uiBindings = this.uiBindings || _.result( this, "ui" );
-			if( ! uiBindings ) return hash;
-
-			var newHash = {};
-			_.each( hash, function( value, key ) {
-				var match = key.match( delegateEventSplitter );
-				var eventName = match[ 1 ], uiElName = match[ 2 ];
-
-				if( uiElName !== "" && ! _.isUndefined( uiBindings[ uiElName ] ) ) {
-					var selector = uiBindings[uiElName];
-					key = eventName + " " + selector;
-				}
-
-				newHash[ key ] = value;
-			} );
-
-			return newHash;
+			view.delegateEvents();
 		}
 
 		function getValueOfBestMatchingHashEntry( hash, message, view ) {
@@ -261,4 +251,6 @@
 			return matchingEntries.length ? matchingEntries[ 0 ].value : null;
 		}
 	};
-})( Backbone, _ );
+
+	return Backbone.Courier;
+} ) );

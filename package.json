@@ -1,7 +1,7 @@
 {
   "name": "backbone-courier",
   "description" : "Easily bubble events up your view hierarchy in your Backbone.js applications.",
-  "version": "0.5.11",
+  "version": "0.6.0",
   "main": "dist/backbone.courier.js",
   "devDependencies": {
     "grunt": "~0.4.1",

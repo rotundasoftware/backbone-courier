@@ -264,6 +264,10 @@ _valueFld_onKeyUp : function() {
 * Backbone.js (tested with v0.9.9 and later, untested with earlier versions)
 * jQuery or Zepto. You can eliminate this dependency by overriding `View._getParentView()` and providing an alternate means to determine view hierarchy that does not rely on the `$.parent()` and `$.data()` functions.
 
-## Feedback and bug reports
+## Change log
 
-Please share your feedback, suggestions, and bug reports by opening issues. We'd love to hear your suggestions on how this plugin can be polished and / or improved for your paricular needs.
+#### v0.6.0
+
+* Added UMD wrapper.
+* Depreciated `spawnMessages` hash.
+* Depreciated `.` option in `passMessages` hash to pass a message through verbatim.
