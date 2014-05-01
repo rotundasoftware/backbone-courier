@@ -220,8 +220,12 @@ The following methods may be overridden to customize Backbone.Courier for your e
 
 ## Change log
 
+#### v0.6.1
+
+* Small bug fix that could cause errors of the form `Cannot read property 'data' of undefined`.
+
 #### v0.6.0
 
-* BREAKING: Removed `spawnMessages` hash. Use version v0.5.11 if you want this functionality back.
+* BREAKING: Removed `spawnMessages` hash. Use version v0.5.x if you want this functionality back.
 * Now `view.spawn( data )` will call backbone's native `view.trigger( data )` automatically.
 * Added UMD wrapper.

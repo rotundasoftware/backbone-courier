@@ -38,7 +38,7 @@
 			message.data = message.data || {};
 
 			this.trigger( message.name, message.data );
-			
+
 			var isRoundTripMessage = message.name[ message.name.length - 1 ] === "!";
 
 			var curParent = this._getParentView();
@@ -142,7 +142,7 @@
 
 		// ****************** Body of Backbone.Courier.add() function ****************** 
 
-		if( view.el ) prepareViewElement( view ); // otherwise this will be done when #setElement is called
+		if( view.$el ) prepareViewElement( view ); // otherwise this will be done when #setElement is called
 
 		// ****************** Private Utility Functions ****************** 
 
