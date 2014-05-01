@@ -114,11 +114,11 @@ The `onMessages` hash is the means by which a parent view can take action on, or
 <ul>
 <li>The <code>messageName</code> portion is matched against the name of the messages that are received.</li>
 <li>The <code>source</code> portion can be used to match only messages that come from a particular child view. In order to map the <code>source</code> name to a particular child view, by default Backbone.Courier expects a hash of child views to be stored in <code>view.subviews</code>, the keys of the hash being the names of the child views, and the values references to the child view objects. You can  create this hash yourself, but an easier approach is to use the <a href="Backbone.Subviews">Backbone.Subviews</a> mixin, which will automatically create it for you. (You may also override <code>View._getChildViewNamed()</code> to customize how <code>source</code> mapped to child view objects.)</li>
-<li>The "callback" portion determines what is done when a matching message is received. Just like Backbone's events hash, you can either provide the callback as the name of a method on the view, or a direct function body. In either case, the callback function is invoked with three arguments:
+<li>The "callback" portion determines what is done when a matching message is received. Just like Backbone's events hash, you can either provide the callback as the name of a method on the view, or a direct function body. In either case, the message object is provided as the sole argument for the callback function. The message object always contains exactly three properties:
 <ol>
-<li><code>data</code> - the application defined data object, as provided the in second argument to <code>View.spawn()</code>.</li>
-<li><code>message</code> - the name of the message.</li>
-<li><code>source</code> - the child view object that spawned or passed this message to this view.</li>
+<li><code>message.name</code> is the name of the message</li>
+<li><code>message.data</code> is an application defined data object, as provided the in second argument to <code>View.spawn()</code></li>
+<li><code>message.source</code> is the child view object that spawned or passed this message to this view.</li></li>
 </ol>
 </li>
 </ul>

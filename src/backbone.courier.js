@@ -142,7 +142,7 @@
 
 		// ****************** Body of Backbone.Courier.add() function ****************** 
 
-		if( this.el ) prepareViewElement( view ); // otherwise this will be done when #setElement is called
+		if( view.el ) prepareViewElement( view ); // otherwise this will be done when #setElement is called
 
 		// ****************** Private Utility Functions ****************** 
 
