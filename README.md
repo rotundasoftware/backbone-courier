@@ -222,6 +222,5 @@ The following methods may be overridden to customize Backbone.Courier for your e
 
 #### v0.6.0
 
-* BREAKING: Changed message callback signature to `function( data, messageName, src )` from function( `message` )
-* BREAKING: Removed `spawnMessages` hash.
+* BREAKING: Removed `spawnMessages` hash. Use version v0.5.11 if you want this functionality back.
 * Added UMD wrapper.
