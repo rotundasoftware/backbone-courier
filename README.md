@@ -223,5 +223,5 @@ The following methods may be overridden to customize Backbone.Courier for your e
 #### v0.6.0
 
 * BREAKING: Removed `spawnMessages` hash. Use version v0.5.11 if you want this functionality back.
-* Now view.spawn( data ) will call backbone's native view.trigger( data ) automatically.
+* Now `view.spawn( data )` will call backbone's native `view.trigger( data )` automatically.
 * Added UMD wrapper.
