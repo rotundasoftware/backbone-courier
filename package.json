@@ -1,7 +1,7 @@
 {
   "name": "backbone-courier",
-  "description" : "Easily bubble events up your view hierarchy in your Backbone.js applications.",
-  "version": "0.6.0",
+  "description": "Easily bubble events up your view hierarchy in your Backbone.js applications.",
+  "version": "0.6.1",
   "main": "src/backbone.courier.js",
   "devDependencies": {
     "grunt": "~0.4.1",
@@ -11,7 +11,11 @@
   "scripts": {
     "test": "open test/index.html"
   },
-  "keywords" : [ "backbone", "events", "view" ],
+  "keywords": [
+    "backbone",
+    "events",
+    "view"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/rotundasoftware/backbone.courier.git"
