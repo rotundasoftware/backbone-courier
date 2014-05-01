@@ -23,7 +23,7 @@
 
 		// ****************** Public Courier functions ****************** 
 
-		view.spawn = function( message, data, trigger ) {
+		view.spawn = function( message, data ) {
 			// can be called with message argument as an object, in which case message.name is required,
 			// or can be called with message as a string that represents the name of the message and
 			// data object which will be added to message object at message.data
@@ -37,6 +37,8 @@
 			message.source = view;
 			message.data = message.data || {};
 
+			this.trigger( message.name, message.data );
+			
 			var isRoundTripMessage = message.name[ message.name.length - 1 ] === "!";
 
 			var curParent = this._getParentView();
