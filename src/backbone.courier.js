@@ -136,8 +136,9 @@
 		// ****************** Overridden Backbone.View functions ****************** 
 
 		view.setElement = function( element, delegate ) {
-			overriddenViewMethods.setElement.call( this, element, delegate );
+			var retval = overriddenViewMethods.setElement.call( this, element, delegate );
 			prepareViewElement( view );
+			return retval;
 		};
 
 		// ****************** Body of Backbone.Courier.add() function ****************** 
