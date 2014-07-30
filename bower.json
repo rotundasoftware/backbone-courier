@@ -1,6 +1,6 @@
 {
 	"name": "backbone.courier",
-	"version": "0.5.10",
+	"version": "0.6.2",
 	"homepage": "https://github.com/rotundasoftware/backbone.courier",
 	"authors": [
 		"David Beck <david@rotundasoftware.com>"
@@ -17,6 +17,6 @@
 	"license": "MIT",
 	"dependencies" : {
 		"backbone" : "~1.1",
-		"jquery" : "~1.10"
+		"jquery" : "~1.11.1 || ~2.1.1"
 	}
 }
