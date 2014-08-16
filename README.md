@@ -6,7 +6,7 @@ Wait, what the heck does that mean, "perfect encapsulation of concerns"?
 
 ## The Doctrine of Perfect Encapsulation
 
-Communicate between views in backbone can get messy. However, if you pay close attention to the principle of encapsulation you can develop extremely intricate interfaces with clean, decoupled views that are easy to conceptualize, maintain and test. What specifically does encapsulation mean?
+Communication between views can get messy. However, if you pay close attention to the principle of encapsulation you can develop extremely intricate interfaces with clean, decoupled views that are easy to conceptualize, maintain and test. What specifically does encapsulation mean?
 
 * Views only call functions on their *immediate* children. Their grandchildren can be interacted with only by calling functions on their children, which in turn call functions on their grandchildren, etc.
 * Views never have any explicit dependencies on their surroundings or their environment. That is, they do not have any explicit dependencies on or references to their ancestors or their siblings.
