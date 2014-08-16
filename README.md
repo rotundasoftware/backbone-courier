@@ -11,7 +11,7 @@ Communication between views can get messy. However, if you pay close attention t
 * Views only call functions on their *immediate* children. Their grandchildren can be interacted with only by calling functions on their children, which in turn call functions on their grandchildren, etc.
 * Views never have any explicit dependencies on their surroundings or their environment. That is, they do not have any explicit dependencies on or references to their ancestors or their siblings.
 * When a view needs to interact with its parent or an ancestor, it does so (*without* explicit dependencies) by spawning a message that bubbles up the view hierarchy.
-* Parent views, when passing messages from their children to their ancestors, modify those messages in order to make them appropriate for the new, larger context and hide private concerns.
+* When views pass messages from their children to their ancestors, they modify those messages in order to make them appropriate for the new, larger context and hide private concerns.
 * If a view needs information from its ancestors, it requests it using a message that bubbles up the hierarchy and then back down, returning a value (again, without explicit dependencies).
 * Global variables and / or event aggregators are not used.
 
