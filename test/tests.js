@@ -32,7 +32,7 @@ $(document).ready(function() {
 				ok("testMessage heard");
 			},
 			"testMessageWithData" : function (data) {
-				deepEqual(data.data, messageData, "testMessageWithData heard with correct payload");
+				deepEqual(data, messageData, "testMessageWithData heard with correct payload");
 			}
 		};
 
@@ -275,40 +275,14 @@ $(document).ready(function() {
 		};
 
 		this.grandparentView.onMessages = {
-			"message1" : function(message) {
+			"message1" : function(data,source) {
 				ok('Heard message');
-				equal(message.source, _this.parentView, 'Source of message (the parent) is correct');
-				deepEqual(message.data, messageData, 'Message data is correct (same as original)');
+				equal(source, _this.parentView, 'Source of message (the parent) is correct');
+				deepEqual(data, messageData, 'Message data is correct (same as original)');
 			}
 		};
 
 		this.childView.spawn('message1', messageData);
-
-	});
-
-	test('Pass message from child onto grandparent changing the message data', 3, function () {
-
-		var _this = this;
-
-		var originalMessageData = {firstName : 'Backbone', lastName : 'Courier'};
-		var modifiedMessageData = {firstName : 'Backbone2', lastName : 'Courier'}
-
-		this.parentView.passMessages = {
-			"message1" : function(message, oldData) {
-				message.data = oldData;
-				message.data.firstName = "Backbone2";
-			}
-		};
-
-		this.grandparentView.onMessages = {
-			"message1" : function(message) {
-				ok('Heard message');
-				equal(message.source, _this.parentView, 'Source of message (the parent) is correct');
-				deepEqual(message.data, modifiedMessageData, 'Message data is correct (modified by parentView)');
-			}
-		};
-
-		this.childView.spawn('message1', originalMessageData);
 
 	});
 
@@ -323,12 +297,12 @@ $(document).ready(function() {
 		};
 
 		this.grandparentView.onMessages = {
-			"message2" : function(message) {
+			"message2" : function(data,source) {
 				ok('Heard message');
-				equal(message.source, _this.parentView, 'Source of message (the parent) is correct');
-				deepEqual(message.data, originalMessageData, 'Message data is correct (same as original)');
+				equal(source, _this.parentView, 'Source of message (the parent) is correct');
+				deepEqual(data, originalMessageData, 'Message data is correct (same as original)');
 			},
-			"message1" : function(message) {
+			"message1" : function() {
 				ok(false,'Should not have heard "message1"');
 			}
 		};
@@ -345,19 +319,16 @@ $(document).ready(function() {
 		var originalMessageData = {firstName : 'Backbone', lastName : 'Courier'};
 
 		this.parentView.passMessages = {
-			"message1" : function(message, oldData) {
-				message.name = "message2";
-				message.data = oldData;
-			}
+			"message1" : "message2"
 		};
 
 		this.grandparentView.onMessages = {
-			"message2" : function(message) {
+			"message2" : function(data,source) {
 				ok('Heard message');
-				equal(message.source, _this.parentView, 'Source of message (the parent) is correct');
-				deepEqual(message.data, originalMessageData, 'Message data is correct (same as original)');
+				equal(source, _this.parentView, 'Source of message (the parent) is correct');
+				deepEqual(data, originalMessageData, 'Message data is correct (same as original)');
 			},
-			"message1" : function(message) {
+			"message1" : function() {
 				ok(false,'Should not have heard "message1"');
 			}
 		};
