@@ -17,7 +17,8 @@ Communication between views can get messy. However, if you pay close attention t
 
 Backbone.Courier is a very small library (< 200 lines of code) that can be leveraged to easily follow these principles of perfect encapsulation.
 
-Use Backbone.Courier in conjunction with [Backbone.Subviews](https://github.com/rotundasoftware/backbone.subviews) and [Cartero](https://github.com/rotundasoftware/cartero) / [Parcelify](https://github.com/rotundasoftware/parcelify) for a completely modularized front end experience.
+> BONUS: Use Backbone.Courier in conjunction with [Backbone.Subviews](https://github.com/rotundasoftware/backbone.subviews) and
+> [Cartero](https://github.com/rotundasoftware/cartero) / [Parcelify](https://github.com/rotundasoftware/parcelify) for a completely modularized front end experience.
 
 ## How it works
 
