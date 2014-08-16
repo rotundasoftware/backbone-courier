@@ -6,6 +6,8 @@ Wait, what the heck does that mean, "perfect encapsulation of concerns"?
 
 ## The Doctrine of Perfect Encapsulation
 
+Communicate between views in backbone can get messy. However, if you pay close attention to the principle of encapsulation you can develop extremely intricate interfaces with clean, decoupled views that are easy to conceptualize, maintain and test. What specifically does encapsulation mean?
+
 * Views only call functions on their *immediate* children. Their grandchildren can be interacted with only by calling functions on their children, which in turn call functions on their grandchildren, etc.
 * Views never have any explicit dependencies on their surroundings or their environment. That is, they do not have any explicit dependencies on or references to their ancestors or their siblings.
 * When a view needs to interact with its parent or an ancestor, it does so (*without* explicit dependencies) by spawning a message that bubbles up the view hierarchy.
@@ -13,7 +15,7 @@ Wait, what the heck does that mean, "perfect encapsulation of concerns"?
 * If a view needs information from its ancestors, it requests it using a message that bubbles up the hierarchy and then back down, returning a value (again, without explicit dependencies).
 * Global variables and / or event aggregators are not used.
 
-Backbone.Courier is a very small library (< 200 lines of code) that can be leveraged to easily follow this doctrine. It uses the DOM tree to infer view hierarchy structure and then enables appropriate communication up and down that hierarchy. The result is completely decoupled front end code, split into components that are easy to conceptualize, maintain and test.
+Backbone.Courier is a very small library (< 200 lines of code) that can be leveraged to easily follow these best practices.
 
 Use Backbone.Courier in conjunction with [Backbone.Subviews](https://github.com/rotundasoftware/backbone.subviews) and [Cartero](https://github.com/rotundasoftware/cartero) / [Parcelify](https://github.com/rotundasoftware/parcelify) for a completely modularized front end experience.
 
