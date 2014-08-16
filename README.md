@@ -1,6 +1,6 @@
 # Backbone.Courier
 
-A hierarchal messaging system for backbone applications that makes it easy to bubble events ("messages") up your view hierarchy while simultaneously enabling "perfect encapsulation of concerns" in your view layer.
+A teeny tiny library that makes it easy to bubble events ("messages") up your backbone.js view hierarchy while simultaneously enabling "perfect encapsulation of concerns" in your view layer.
 
 Wait, what the heck does that mean, "perfect encapsulation of concerns"?
 
