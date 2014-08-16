@@ -13,9 +13,9 @@ Wait, what the heck does that mean, "perfect encapsulation of concerns"?
 * Whenever possible, information about a view's environment is passed into the view as a configuration option. However, if the information is dynamic, the view gathers it using a message that bubbles up the hierarchy and then back down, returning a value (again, without explicit dependencies).
 * Global variables and / or event aggregators are not used.
 
-Courier is a very small library (< 200 lines of code) that can be leveraged to easily follow this doctrine. It uses the DOM tree to infer view hierarchy structure and then enables appropriate communication up and down that hierarchy. The result is completely decoupled front end code, split into components that are easy to conceptualize, maintain and test.
+Backbone.Courier is a very small library (< 200 lines of code) that can be leveraged to easily follow this doctrine. It uses the DOM tree to infer view hierarchy structure and then enables appropriate communication up and down that hierarchy. The result is completely decoupled front end code, split into components that are easy to conceptualize, maintain and test.
 
-Use cartero in conjunction with [Backbone.Subviews](https://github.com/rotundasoftware/backbone.subviews) and [Cartero](https://github.com/rotundasoftware/cartero) / [Parcelify](https://github.com/rotundasoftware/parcelify) for a completely modularized front end experience.
+Use Backbone.Courier in conjunction with [Backbone.Subviews](https://github.com/rotundasoftware/backbone.subviews) and [Cartero](https://github.com/rotundasoftware/cartero) / [Parcelify](https://github.com/rotundasoftware/parcelify) for a completely modularized front end experience.
 
 ## How it works
 
