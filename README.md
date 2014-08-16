@@ -4,14 +4,14 @@ A teeny tiny library that makes it easy to bubble events ("messages") up your ba
 
 Wait, what the heck does that mean, "perfect encapsulation of concerns"?
 
-## The Doctrine of Perfect Encapsulation
+## Perfect Encapsulation
 
-Communication between views can get messy. However, if you pay close attention to the principle of encapsulation you can develop extremely intricate interfaces with clean, decoupled views that are easy to conceptualize, maintain and test. What specifically does encapsulation mean?
+Communication between views can get messy. However, if you pay close attention to the principle of encapsulation you can develop extremely intricate interfaces with clean, decoupled views that are easy to conceptualize, maintain and test. What specifically does perfect encapsulation mean?
 
 * Views only call functions on their *immediate* children. Their grandchildren can be interacted with only by calling functions on their children, which in turn call functions on their grandchildren, etc.
 * Views never have any explicit dependencies on their surroundings or their environment. That is, they do not have any explicit dependencies on or references to their ancestors or their siblings.
 * When a view needs to interact with its parent or an ancestor, it does so (*without* explicit dependencies) by spawning a message that bubbles up the view hierarchy.
-* Parent views, when passing messages from their children to their ancestors, always modify those messages in order to make them appropriate for the new, larger context and hide private concerns.
+* Parent views, when passing messages from their children to their ancestors, modify those messages in order to make them appropriate for the new, larger context and hide private concerns.
 * If a view needs information from its ancestors, it requests it using a message that bubbles up the hierarchy and then back down, returning a value (again, without explicit dependencies).
 * Global variables and / or event aggregators are not used.
 
