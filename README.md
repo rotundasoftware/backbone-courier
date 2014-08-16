@@ -29,13 +29,13 @@ var myView = new Backbone.View();
 Backbone.Courier.add( myView ); // add courier functionality to myView
 ```
 
-A view spawns a message that is passed to its parent using `View.spawn( messageName, [data] )`:
+A view spawns a message that is passed to its parent using `view.spawn( messageName, [data] )`:
 
 ```javascript
-myView.spawn( "selected", model );
+myView.spawn( "selected", this.model );
 ```
 
-The view's parent can then "handle" the message and / or pass it to the parent's own parent, and so on, up the view hierarchy. By default, the DOM tree is used to automatically infer the view hierarchy structure.
+The view's parent can then "handle" the message and / or pass it to the parent's own parent, and so on, up the view hierarchy. By default, the DOM tree is used to infer the view hierarchy.
 
 ```javascript
 MyViewClass = Backbone.View.extend( {
@@ -87,17 +87,17 @@ MyViewClass = Backbone.View.extend( {
 ### Public API index
 
 * [Backbone.Courier.add( view )](#add) - add courier functionality to view
-* [View.spawn( messageName, [data] )](#spawn) - spawn a message to pass up the view hierarchy
-* [View.onMessages](#onMessages) - (hash) determines how messages from child views are handled
-* [View.passMessages](#passMessages) - (hash) determines how / which messages are passed on to the parent view
+* [view.spawn( messageName, [data] )](#spawn) - spawn a message to pass up the view hierarchy
+* [view.onMessages](#onMessages) - (hash) determines how messages from child views are handled
+* [view.passMessages](#passMessages) - (hash) determines how / which messages are passed on to the parent view
 
 ---
 
 ### <a name="add"></a>Backbone.Courier.add( view )
 
-Adds courier methods and behavior, as described below, to the view object referenced by the argument.
+Adds courier methods and behavior to `view`.
 
-### <a name="spawn"></a>View.spawn( messageName, [data] )
+### <a name="spawn"></a>view.spawn( messageName, [data] )
 
 The `spawn` method generates a new message and passes it to the view's "parent", i.e. the closest ancestor view in the DOM tree. The parent view can then "handle" this message, taking some action upon its receipt, by including an entry for this message in its `onMessages` hash, and / or it can pass this message to its own parent, using its `passMessages` hash. In this manner the message may bubble up the view hierarchy, as determined (by default) by the DOM tree.
 
@@ -112,7 +112,7 @@ The `spawn` method generates a new message and passes it to the view's "parent",
 > * Round trip messages *must* be handled. If they are not handled by any ancestor view, an error will be thrown.
 > * Round trip messages will continue to be passed up the hierarchy until they are handled (no entry in the `passMessages` hash is required).
 
-### <a name="onMessages"></a>View.onMessages
+### <a name="onMessages"></a>view.onMessages
 
 The `onMessages` hash is the means by which a parent view can take action on, or "handle", messages received from its children. Entries in the `onMessages` hash have the format:
 	
@@ -120,10 +120,10 @@ The `onMessages` hash is the means by which a parent view can take action on, or
 
 <ul>
 <li>The <code>messageName</code> portion is matched against the name of the messages that are received.</li>
-<li>The <code>source</code> portion can be used to match only messages that come from a particular child view. In order to map the <code>source</code> name to a particular child view, by default Backbone.Courier expects a hash of child views to be stored in <code>view.subviews</code>, the keys of the hash being the names of the child views, and the values references to the child view objects. You can  create this hash yourself, but an easier approach is to use the <a href="Backbone.Subviews">Backbone.Subviews</a> mixin, which will automatically create it for you. (You may also override <code>View._getChildViewNamed()</code> to customize how <code>source</code> mapped to child view objects.)</li>
+<li>The <code>source</code> portion can be used to match only messages that come from a particular child view. In order to map the <code>source</code> name to a particular child view, by default Backbone.Courier expects a hash of child views to be stored in <code>view.subviews</code>, the keys of the hash being the names of the child views, and the values references to the child view objects. You can  create this hash yourself, but an easier approach is to use the <a href="Backbone.Subviews">Backbone.Subviews</a> mixin, which will automatically create it for you. (You may also override <code>view._getChildViewNamed()</code> to customize how <code>source</code> mapped to child view objects.)</li>
 <li>The "callback" portion determines what is done when a matching message is received. Just like Backbone's events hash, you can either provide the callback as the name of a method on the view, or a direct function body. In either case, the callback is invoked with three arguments:
 <ol>
-<li><code>data</code> is an application defined data object, as provided the in second argument to <code>View.spawn()</code></li>
+<li><code>data</code> is an application defined data object, as provided the in second argument to <code>view.spawn()</code></li>
 <li><code>source</code> is the child view object that spawned or passed this message to this view.</li>
 <li><code>messageName</code> is the name of the message</li>
 </ol>
@@ -160,7 +160,7 @@ _onResourceSelected : function( data ) {
 ...
 ```
 
-### <a name="passMessages"></a>View.passMessages
+### <a name="passMessages"></a>view.passMessages
 
 The `passMessages` hash is used to pass messages received from a child view further up the view hierarchy, to potentially be handled by a more distant ancestor. Each entry in the hash has the format:
 
@@ -200,20 +200,20 @@ passMessages : {
 
 The following methods may be overridden to customize Backbone.Courier for your environment. To override one of the methods, attach your own version of the method to your view objects either before or after calling Backbone.Courier.add().
 
-### View._getParentView()
+### view._getParentView()
 
-`View._getParentView()` is an internal method that returns a view's "parent view". You may supply your own version of this method on your view objects (which will override the default implementation) if you want to provide a custom means to determine a view's parent. The default implementation determines a view's parent by its position in the DOM tree, scanning the tree for the closest parent that has a Backbone view in $( el ).data( "view" ). This data value is set on each view's DOM element automatically by Backbone.Courier.
+`view._getParentView()` is an internal method that returns a view's "parent view". You may supply your own version of this method on your view objects (which will override the default implementation) if you want to provide a custom means to determine a view's parent. The default implementation determines a view's parent by its position in the DOM tree, scanning the tree for the closest parent that has a Backbone view in $( el ).data( "view" ). This data value is set on each view's DOM element automatically by Backbone.Courier.
 
 > Note: The default implementation of '_getParentView' depends on jQuery's or Zepto's `$.parent()` and `$.data()` methods, which is the only dependency on a DOM library or tree in Backbone.Courier.
 
-### View._getChildViewNamed( childViewName )
+### view._getChildViewNamed( childViewName )
 
-`View._getChildViewNamed( childViewName )` is an internal method that is used to resolve the child view names optionally supplied in the `source` part of the `onMessages` and `passMessages` hash. You may supply your own version of this method on your view objects in order to store child views in a location other than the default `view.subviews[ childViewName ]`.
+`view._getChildViewNamed( childViewName )` is an internal method that is used to resolve the child view names optionally supplied in the `source` part of the `onMessages` and `passMessages` hash. You may supply your own version of this method on your view objects in order to store child views in a location other than the default `view.subviews[ childViewName ]`.
 
 ## Dependencies
 
 * Backbone.js (tested with v0.9.9 and later, untested with earlier versions)
-* jQuery or Zepto. You can eliminate this dependency by overriding `View._getParentView()` and providing an alternate means to determine view hierarchy that does not rely on the `$.parent()` and `$.data()` functions.
+* jQuery or Zepto. You can eliminate this dependency by overriding `view._getParentView()` and providing an alternate means to determine view hierarchy that does not rely on the `$.parent()` and `$.data()` functions.
 
 ## Change log
 
