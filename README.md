@@ -1,14 +1,21 @@
 # Backbone.Courier
 
-Easily bubble events ("messages") up your view hierarchy in your [Backbone.js](http://backbonejs.org/) applications.
+A hierarchal messaging system for backbone applications that makes it easy to bubble events ("messages") up your view hierarchy while simultaneously enabling "perfect encapsulation of concerns" in your view layer.
 
-## Benefits
-* Provides a hierarchal message path through which views can communicate.
-* Is designed to promote encapsulation of concerns, and does not rely on the use of application globals.
-* Makes it easy to modify messages for larger contexts as they bubble up your view hierarchy.
-* Takes advantage of existing DOM tree to automatically infer view hierarchy structure (by default).
-* Allows child views to call functions on their parent views that return values.
-* Fits together with [Backbone.Subviews](https://github.com/rotundasoftware/backbone.subviews) so parents can act on messages from particular children.
+Wait, what the heck does that mean, "perfect encapsulation of concerns"?
+
+## The Doctrine of Perfect Encapsulation
+
+* Views only call functions on their *immediate* children. Their grandchildren can be interacted with only by calling functions on their children, which in turn call functions on their grandchildren, etc.
+* Views never have any explicit dependencies on their surroundings or their environment. That is, they do not have any explicit dependencies on or references to their ancestors or their siblings.
+* When a view needs to interact with its parent or an ancestor, it does so (*without* any explicit dependencies) by spawning a well defined message that  bubbles up the view hierarchy on its own accord.
+* Parent views, when passing up messages from their children to their ancestors, always modify those messages in order to make the message appropriate for the new, larger context and hide private concerns from their ancestors.
+* Whenever possible, information about a view's environment is passed into the view as a configuration option. However, if the information is dynamic, the view gathers it using a message that bubbles up the hierarchy and then back down, returning a value (again, without explicit dependencies).
+* Global variables and / or event aggregators are not used.
+
+Courier is a small library that provides a framework by which your apps can easily follow this doctrine of perfect encapsulation. It uses the DOM tree (by default) to automatically infer view hierarchy structure and then enables appropriate communication up and down that hierarchy. The result is completely decoupled front end code, split into components that are easy to conceptualize, maintain and test.
+
+Use cartero in conjunction with [Backbone.Subviews](https://github.com/rotundasoftware/backbone.subviews) and [Cartero](https://github.com/rotundasoftware/cartero) / [Parcelify](https://github.com/rotundasoftware/parcelify) for a completely modularized front end experience.
 
 ## How it works
 
@@ -22,9 +29,7 @@ Backbone.Courier.add( myView ); // add courier functionality to myView
 A view spawns a message that is passed to its parent using `View.spawn( messageName, [data] )`:
 
 ```javascript
-myView.spawn( "selected", { 
-	methodOfSelection: "click"  // application defined data
-} );
+myView.spawn( "selected", model );
 ```
 
 The view's parent can then "handle" the message and / or pass it to the parent's own parent, and so on, up the view hierarchy. By default, the DOM tree is used to automatically infer the view hierarchy structure.
@@ -46,19 +51,18 @@ MyViewClass = Backbone.View.extend( {
 		"selected" : "resourceSelected"
 	},
 
-	_onChildSelected : function( message ) {
+	_onChildSelected : function( data, source, messageName ) {
 		alert( "My child view just spawned the 'selected' message." );
 
-		// the message argument that is passed to message 
-		// handlers has three properties. The name of the message:
-		assert( message.name === "selected" );
-
 		// any application defined data that has been supplied:
-		assert( message.data.methodOfSelection === "click" );
+		assert( data instanceof Backbone.Model );
 
-		// and the child view object that spawned or 
-		// passed this message (in this case, myView):
-		assert( message.source instanceof Backbone.View );
+		// the child view object that spawned or passed this
+		// message (in this case, myView):
+		assert( source instanceof Backbone.View );
+
+		// and the name of the message
+		assert( messageName === "selected" );
 
 		alert( "After I'm done here, because of the entry in my passMessages " +
 			"hash, I'll change this message's name to 'resourceSelected', " + 
@@ -92,11 +96,11 @@ Adds courier methods and behavior, as described below, to the view object refere
 
 ### <a name="spawn"></a>View.spawn( messageName, [data] )
 
-The `spawn` method generates a new message and passes it to the view's "parent", i.e. the closest ancestor of this view in the DOM tree. The parent view can then "handle" this message, taking some action upon its receipt, by including an entry for this message in its `onMessages` hash, and it can optionally pass this message to its own parent, using its `passMessages` hash. In this manner the message may bubble up the view hierarchy, as determined (by default) by the DOM tree.
+The `spawn` method generates a new message and passes it to the view's "parent", i.e. the closest ancestor view in the DOM tree. The parent view can then "handle" this message, taking some action upon its receipt, by including an entry for this message in its `onMessages` hash, and / or it can pass this message to its own parent, using its `passMessages` hash. In this manner the message may bubble up the view hierarchy, as determined (by default) by the DOM tree.
 
 `messageName` is the name of the message being spawned. The name is used in the `onMessages` and `passMessages` hashes of ancestor views to handle or pass the message further up the view hierarchy, respectively.
 
-`data` is an application defined data object that will be available to this view's ancestors when handling or passing this message.
+`data` is application defined data that will be available to this view's ancestors when handling or passing this message.
 
 > #### Round trip messages
 > 
@@ -107,18 +111,18 @@ The `spawn` method generates a new message and passes it to the view's "parent",
 
 ### <a name="onMessages"></a>View.onMessages
 
-The `onMessages` hash is the means by which a parent view can take action on, or "handle", messages received from its children. Entries in the `onMessages` hash are written in the format:
+The `onMessages` hash is the means by which a parent view can take action on, or "handle", messages received from its children. Entries in the `onMessages` hash have the format:
 	
 	"messageName source" : callback
 
 <ul>
 <li>The <code>messageName</code> portion is matched against the name of the messages that are received.</li>
 <li>The <code>source</code> portion can be used to match only messages that come from a particular child view. In order to map the <code>source</code> name to a particular child view, by default Backbone.Courier expects a hash of child views to be stored in <code>view.subviews</code>, the keys of the hash being the names of the child views, and the values references to the child view objects. You can  create this hash yourself, but an easier approach is to use the <a href="Backbone.Subviews">Backbone.Subviews</a> mixin, which will automatically create it for you. (You may also override <code>View._getChildViewNamed()</code> to customize how <code>source</code> mapped to child view objects.)</li>
-<li>The "callback" portion determines what is done when a matching message is received. Just like Backbone's events hash, you can either provide the callback as the name of a method on the view, or a direct function body. In either case, the message object is provided as the sole argument for the callback function. The message object always contains exactly three properties:
+<li>The "callback" portion determines what is done when a matching message is received. Just like Backbone's events hash, you can either provide the callback as the name of a method on the view, or a direct function body. In either case, the callback is invoked with three arguments:
 <ol>
-<li><code>message.name</code> is the name of the message</li>
-<li><code>message.data</code> is an application defined data object, as provided the in second argument to <code>View.spawn()</code></li>
-<li><code>message.source</code> is the child view object that spawned or passed this message to this view.</li></li>
+<li><code>data</code> is an application defined data object, as provided the in second argument to <code>View.spawn()</code></li>
+<li><code>source</code> is the child view object that spawned or passed this message to this view.</li>
+<li><code>messageName</code> is the name of the message</li>
 </ol>
 </li>
 </ul>
@@ -127,17 +131,17 @@ Example entries in the `onMessages` hash:
 
 ```javascript
 onMessages : {
-	"focused" : function( message ) {
+	"focused" : function( data, source ) {
 		// handle the "focused" message
 		alert( "child view focused" );
-		console.log( message.source ); // output child view that spawned or passed this message
+		console.log( source ); // log the child view that spawned or passed this message
 	},
 
 	// when the "selected" message from the resourcesCollectionView child view
 	// is received, call the _onResourceSelected method on this view
 	"selected resourcesCollectionView" : "_onResourceSelected",
 
-	"giveMeInfo!" : function( message ) {
+	"giveMeInfo!" : function() {
 		// handle the "giveMeInfo!" round trip message. return contents
 		// of `value` to the view that spawned the message,
 		// as the return value of the view.spawn() method
@@ -146,7 +150,7 @@ onMessages : {
 	}
 },
 
-_onResourceSelected : function( message ) {
+_onResourceSelected : function( data ) {
 	// handle the selected message from the resourcesCollectionView child view
 }
 
@@ -157,7 +161,7 @@ _onResourceSelected : function( message ) {
 
 The `passMessages` hash is used to pass messages received from a child view further up the view hierarchy, to potentially be handled by a more distant ancestor. Each entry in the hash has the format:
 
-	"messageName source" : newMessage
+	"messageName source" : "newMessageName"
 
 The `messageName` and `source` parts of the hash key interpreted in exactly the same way as in the `onMessages` hash. 
 
@@ -166,10 +170,10 @@ The `messageName` and `source` parts of the hash key interpreted in exactly the 
 > entries match the message name, the most specific entry will "win", that is, the entry with the
 > greatest number of non-wildcard characters will be used.
 
-The value of `newMessage` determines the message that is passed to the view's parent. It is often desirable to change a message slightly as it bubbles up to a new, larger context. For example, "selected" might become "resourceSelected" as it moves from a resource view to a larger parent view that contains resources as well as other items. Also, it is sometimes desirable to change some of the application defined data in `message.data`, either to add additional data or to remove data that should remain private to lower levels of the view hierarchy.
-* If you do not want to change the message at all before passing it up the hierarchy, specify the string `"."` (a single period) as the value for `newMessage`.
-* If you would like to change the name of the message, but keep the application defined data the same, specify the new name for the message as the value for `newMessage`.
-* If you would like to change the application defined data in the message, specify a direct function body for the value of `newMessage`. The function will be called with two arguments. The first is the message object, with an empty object `{}` as its `message.data` property. The second argument will be the old application defined data, that is, the data passed up by the child view. You can also change the name of the message by setting `message.name`.
+The value of `newMessageName` determines the message that is passed to the view's parent. It is often desirable to change a message's name as it bubbles up to a new, larger context. For example, "selected" might become "resourceSelected" as it moves from a resource view to a larger parent view that contains resources as well as other items. If you do not want to change the message at all before passing it up the hierarchy, specify the string `"."` (a single period).
+
+> Note: If you would like to change the application defined data in the message, you need to handle
+> the message in the `onMessages` hash and then re-spawn the message with new data.
 
 Example entries in the `passMessages` hash:
 
@@ -182,22 +186,12 @@ passMessages : {
 	// child view to "resourceSelected", and pass to parent
 	"selected resourcesCollectionView" : "resourceSelected", 
 
-	// change the "sortStart" message from the resourcesCollectionView 
-	// child view to "resourceSortStart", populate new message.data
-	// with { resourceModel : oldData.modelBeingSorted }, and pass to parent
-	"sortStart resourcesCollectionView" : function( message, oldData ) {
-		message.name = "resourceSortStart";
-		message.data.resourceModel = oldData.modelBeingSorted; 
-	},
-
 	 // pass all other messages on to parent, without any changes
 	"*" : "."
 },
 
 ...
 ```
-
-Note that in all cases, when a message is passed, `message.source` is overwritten and set to the view that is passing the message. If you require a reference to the object that originally spawned the message, you will need to keep that in `message.data` as the message bubbles up the hierarchy.
 
 ## Internal view methods that may be overridden
 
@@ -219,6 +213,11 @@ The following methods may be overridden to customize Backbone.Courier for your e
 * jQuery or Zepto. You can eliminate this dependency by overriding `View._getParentView()` and providing an alternate means to determine view hierarchy that does not rely on the `$.parent()` and `$.data()` functions.
 
 ## Change log
+
+#### v1.0.0
+
+* BREAKING: Changed signature of `callback` portion of `onMessages` hash from `function( message )` to `function( data, source, messageName )`. Sorry, this is a big breaking change existing projects will need to be changed to work with this new signature. However, it is the right thing to do. If you don't want to change your existing projects, just keep using v0.6.1.
+* Removed the ability to supply a function as the value of an entry in the `passMessages` hash.
 
 #### v0.6.1
 

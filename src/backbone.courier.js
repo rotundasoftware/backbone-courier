@@ -54,7 +54,7 @@
 						if( ! _.isFunction( method ) ) method = curParent[ value ];
 						if( ! method ) throw new Error( "Method \"" + value + "\" does not exist" );
 
-						var returnValue = method.call( curParent, message );
+						var returnValue = method.call( curParent, message.data, message.source, message.name );
 						if( isRoundTripMessage ) return returnValue;
 					}
 				}
@@ -67,6 +67,8 @@
 				if( _.isObject( passMessages ) ) {
 					value = getValueOfBestMatchingHashEntry( passMessages, message, curParent );
 					if( value !== null ) {
+						
+
 						if( value === "." )
 							; // noop - pass this message through exactly as-is
 						else if( _.isString( value ) ) {
@@ -74,15 +76,7 @@
 							// change the name to the supplied string
 							message.name = value;
 						}
-						else if( _.isFunction( value ) ) {
-							// if value is a function, we call the function after clearing the
-							// message data, in order that it may modify the message as it sees
-							// fit (adding new data, changing the name), and then pass the message
-							var oldMessageData = message.data;
-							message.data = {};
-							value.call( curParent, message, oldMessageData );
-						}
-						else throw new TypeError( "Values of passMessages hash should be strings or functions." );
+						else throw new TypeError( "Values of passMessages hash should be strings." );
 
 						messageShouldBePassed = true;
 					}
