@@ -137,7 +137,7 @@ onMessages : {
 	"focused" : function( data, source ) {
 		// handle the "focused" message
 		alert( "child view focused" );
-		console.log( source ); // log the child view that spawned or passed this message
+		console.log( source ); // the child view that spawned or passed this message
 	},
 
 	// when the "selected" message from the resourcesCollectionView child view
