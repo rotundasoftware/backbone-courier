@@ -1,14 +1,14 @@
 # Backbone.Courier
 
-A teeny tiny library that makes it easy to bubble events ("messages") up your backbone.js view hierarchy while simultaneously enabling "perfect encapsulation of concerns" in your view layer.
+A tiny library that makes it easy to bubble events ("messages") up your backbone.js view hierarchy while simultaneously enabling "perfect encapsulation of concerns" in your view layer.
 
 Wait, what the heck does that mean, "perfect encapsulation of concerns"?
 
 ## Perfect Encapsulation
 
-Communication between views can get messy. However, if you strictly follow the principle of encapsulation you can develop extremely intricate interfaces with clean, decoupled views that are easy to conceptualize, maintain and test. What specifically does perfect encapsulation mean?
+Communication between views can get messy. However, if you strictly follow some simple rules you can break down complex intricate into perfectly encapsulated views that are easy to conceptualize, maintain and test. What specifically does perfect encapsulation mean?
 
-* Views only call functions on their *immediate* children. Their grandchildren can be interacted with only by calling functions on their children, which in turn call functions on their grandchildren, etc.
+* Views only call methods on their *immediate* children. Their grandchildren can be interacted with only by calling methods on their children, which in turn call methods on their grandchildren, etc.
 * Views never have any explicit dependencies on their surroundings or their environment. That is, they do not have any explicit dependencies on or references to their ancestors or their siblings.
 * When a view needs to interact with its parent or an ancestor, it does so (*without* explicit dependencies) by spawning a message that bubbles up the view hierarchy.
 * When views pass messages from their children to their ancestors, they modify those messages in order to make them appropriate for the new, larger context and hide private concerns.
