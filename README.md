@@ -1,8 +1,8 @@
 # Backbone.Courier
 
-A tiny library that makes it easy to bubble events ("messages") up your backbone.js view hierarchy while simultaneously enabling "perfect encapsulation of concerns" in your view layer.
+A tiny library that makes it easy to bubble events ("messages") up your backbone.js view hierarchy while bolstering code reuse and maintainability by providing a framework for perfectly encapsulated views.
 
-Wait, what the heck does that mean, "perfect encapsulation of concerns"?
+Wait, what the heck does that mean, "perfectly encapsulated views"?
 
 ## Perfect Encapsulation
 
@@ -12,10 +12,10 @@ Communication between views can get messy. However, if you strictly follow some 
 * Views never have any explicit dependencies on their surroundings or their environment. That is, they do not have any explicit dependencies on or references to their ancestors or their siblings.
 * When a view needs to interact with its parent or an ancestor, it does so (*without* explicit dependencies) by spawning a message that bubbles up the view hierarchy.
 * When views pass messages from their children to their ancestors, they modify those messages in order to make them appropriate for the new, larger context and hide private concerns.
-* If a view needs information from its ancestors, it requests it using a message that bubbles up the hierarchy and then back down, returning a value (again, without explicit dependencies).
+* If a view needs information from its ancestors, it requests it using a message that bubbles up the hierarchy and then back down, returning a value (again, *without* explicit dependencies).
 * Global variables and / or event aggregators are not used.
 
-Backbone.Courier is a very small library (< 200 lines of code) that can be leveraged to easily follow these principles of perfect encapsulation.
+Backbone.Courier is a very small library (< 200 lines of code) that can be leveraged to easily follow these rules and create complex interfaces from small, reusable, decoupled views.
 
 > BONUS: Use Backbone.Courier in conjunction with [Backbone.Subviews](https://github.com/rotundasoftware/backbone.subviews) and
 > [Cartero](https://github.com/rotundasoftware/cartero) / [Parcelify](https://github.com/rotundasoftware/parcelify) for a completely modularized front end experience.
