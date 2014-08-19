@@ -4,9 +4,9 @@ A tiny library that bubble events ("messages") up your [backbone.js](http://back
 
 Wait, what the heck does that mean, "perfectly encapsulated views"?
 
-## Perfect Encapsulation
+## Perfectly Encapsulated Views
 
-Communication between views can get messy. However, if you strictly follow some simple rules you can break down complex intricate into perfectly encapsulated views that are easy to conceptualize, maintain and test. What specifically does perfect encapsulation mean?
+Communication between views can get messy. However, if you strictly follow some simple rules you can break down complex intricate into perfectly encapsulated views that are easy to conceptualize, maintain and test. What specifically do perfectly encapsulated views look like?
 
 * Views only call methods on their *immediate* children. Their grandchildren can be interacted with only by calling methods on their children, which in turn call methods on their grandchildren, etc.
 * Views never have any explicit dependencies on their surroundings or their environment. That is, they do not have any explicit dependencies on or references to their ancestors or their siblings.
