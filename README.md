@@ -1,6 +1,6 @@
 # Backbone.Courier
 
-A tiny library that makes it easy to bubble events ("messages") up your backbone.js view hierarchy while bolstering code reuse and maintainability by providing a framework for perfectly encapsulated views.
+A tiny library that bubble events ("messages") up your [backbone.js](http://backbonejs.org/) view hierarchy while bolstering code reuse and maintainability by providing a framework for perfectly encapsulated views.
 
 Wait, what the heck does that mean, "perfectly encapsulated views"?
 
@@ -15,10 +15,10 @@ Communication between views can get messy. However, if you strictly follow some 
 * If a view needs information from its ancestors, it requests it using a message that bubbles up the hierarchy and then back down, returning a value (again, *without* explicit dependencies).
 * Global variables and / or event aggregators are not used.
 
-Backbone.Courier is a very small library (< 200 lines of code) that can be leveraged to easily follow these rules and create complex interfaces from small, reusable, decoupled views.
+Backbone.Courier is a very small library (< 200 lines of code) that can be leveraged to easily follow these rules and create complex interfaces from simple, reusable, decoupled views.
 
 > BONUS: Use Backbone.Courier in conjunction with [Backbone.Subviews](https://github.com/rotundasoftware/backbone.subviews) and
-> [Cartero](https://github.com/rotundasoftware/cartero) / [Parcelify](https://github.com/rotundasoftware/parcelify) for a completely modularized front end experience.
+> [Cartero](https://github.com/rotundasoftware/cartero) / [Parcelify](https://github.com/rotundasoftware/parcelify) for a completely modularized backbone.js experience.
 
 ## How it works
 
