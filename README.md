@@ -1,6 +1,6 @@
 # Backbone.Courier
 
-A tiny library that bubble events ("messages") up your [backbone.js](http://backbonejs.org/) view hierarchy while bolstering code reuse and maintainability by providing a framework for perfectly encapsulated views.
+A tiny library that bubble events ("messages") up your [backbone.js](http://backbonejs.org/) view hierarchy while promoting code reuse and maintainability by providing a framework for perfectly encapsulated views.
 
 Wait, what the heck does that mean, "perfectly encapsulated views"?
 
