@@ -33,12 +33,12 @@
 			// can be called with message argument as an object, in which case message.name is required,
 			// or can be called with message as a string that represents the name of the message and
 			// data object which will be added to message object at message.data
-			if( _.isString( message ) )
+			if( _.isString( message ) ) {
 				message = {
 					name : message,
-					data : _.extend( {}, data )
+					data : data
 				};
-			else if( _.isUndefined( message.name ) ) throw new Error( "Undefined message name." );
+			} else if( _.isUndefined( message.name ) ) throw new Error( "Undefined message name." );
 
 			message.source = view;
 			message.data = message.data || {};
@@ -136,8 +136,9 @@
 		// ****************** Overridden Backbone.View functions ****************** 
 
 		view.setElement = function( element, delegate ) {
-			overriddenViewMethods.setElement.call( this, element, delegate );
+			var retval = overriddenViewMethods.setElement.call( this, element, delegate );
 			prepareViewElement( view );
+			return retval;
 		};
 
 		// ****************** Body of Backbone.Courier.add() function ****************** 
