@@ -59,7 +59,7 @@
 					}
 				}
 
-				messageShouldBePassed = false;
+				messageShouldBePassed = isRoundTripMessage;
 
 				// execute `passMessages` if its configured as a function
 				var passMessages = _.result( curParent, "passMessages" );
@@ -80,10 +80,7 @@
 
 						messageShouldBePassed = true;
 					}
-					else if( isRoundTripMessage ) messageShouldBePassed = true; // round trip messages are passed up even if there is not an entry in the passMessages hash
 				}
-
-				if( isRoundTripMessage ) messageShouldBePassed = true; // round trip messages are passed up even if there is not an entry in the passMessages hash
 
 				if( ! messageShouldBePassed ) break; // if this message should not be passed, then we are done
 
@@ -105,7 +102,7 @@
 				var curElement = this.$el.parent();
 				while( curElement.length > 0 && curElement[0] !== lastPossibleViewElement ) {
 					var view = curElement.data( "view" );
-					if( view && view instanceof Backbone.View ) {
+					if( view && _.isFunction( view.render ) ) {
 						parent = view;
 						break;
 					}
