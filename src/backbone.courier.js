@@ -39,7 +39,7 @@
 
 			this.trigger( message.name, message.data );
 
-			var isRoundTripMessage = message.name[ message.name.length - 1 ] === "!";
+			var isRoundTripMessage = message.name.charAt(message.name.length - 1) === "!";
 
 			var curParent = this._getParentView();
 			var messageShouldBePassed;
