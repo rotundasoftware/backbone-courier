@@ -15,10 +15,10 @@ var MyViewClass = Backbone.View.extend( {
 
 ```
 
-Use `view.spawn( messageName, [data] )` to spawn a message that is passed up to a view's parent. 
+Now use `view.spawn( messageName, [data] )` to spawn a message. 
 
 ```javascript
-myView.spawn( "selected", this.model );
+this.spawn( "selected", this.model );
 ```
 
 The view's parent can then "handle" the message and / or pass it to the parent's own parent, and so on, up the view hierarchy. (The DOM tree is used to determine the view hierarchy.)
