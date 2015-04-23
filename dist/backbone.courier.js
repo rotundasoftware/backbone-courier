@@ -1,5 +1,5 @@
 /*
- * Backbone.Courier, v1.0.2
+ * Backbone.Courier, v1.0.3
  * Copyright (c)2013 Rotunda Software, LLC.
  * Distributed under MIT license
  * http://github.com/rotundasoftware/backbone.courier
@@ -45,7 +45,7 @@
 
 			this.trigger( message.name, message.data );
 
-			var isRoundTripMessage = message.name[ message.name.length - 1 ] === "!";
+			var isRoundTripMessage = message.name.charAt(message.name.length - 1) === "!";
 
 			var curParent = this._getParentView();
 			var messageShouldBePassed;
