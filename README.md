@@ -7,8 +7,12 @@ A tiny library that bubble events ("messages") up your [backbone.js](http://back
 Include Backbone.Courier in your project. Now you can mixin Backbone.Courier to your views:
 
 ```javascript
-var myView = new Backbone.View();
-Backbone.Courier.add( myView ); // add courier functionality to myView
+var MyViewClass = Backbone.View.extend( {
+	initialize : function() {
+		Backbone.Courier.add( this );
+	}
+} );
+
 ```
 
 A view spawns a message that is passed to its parent using `view.spawn( messageName, [data] )`. 
@@ -34,28 +38,19 @@ MyViewClass = Backbone.View.extend( {
 		"selected" : "_onChildSelected"
 	}
 
-	// pass the "selected" message from any child view up to this view's
-	// parent, changing the message's name to "resourceSelected"
-	passMessages : {
-		"selected" : "resourceSelected"
-	},
-
 	_onChildSelected : function( data, source, messageName ) {
 		alert( "My child view just spawned the 'selected' message." );
 
-		// any application defined data that has been supplied:
+		// the three arguments to a message handler are:
+		// 1) any application defined data that has been supplied:
 		assert( data instanceof Backbone.Model );
 
-		// the child view object that spawned or passed this
+		// 2) the child view object that spawned or passed this
 		// message (in this case, myView):
 		assert( source instanceof Backbone.View );
 
-		// and the name of the message
+		// and 3) the name of the message
 		assert( messageName === "selected" );
-
-		alert( "After I'm done here, because of the entry in my passMessages " +
-			"hash, I'll change this message's name to 'resourceSelected', " + 
-			"then pass it to my own parent view." );
 	}
 
 	// a separate example. messages can also be used to get dynamic
