@@ -11,15 +11,17 @@ var myView = new Backbone.View();
 Backbone.Courier.add( myView ); // add courier functionality to myView
 ```
 
-A view spawns a message that is passed to its parent using `view.spawn( messageName, [data] )`. A parent (or grandparent) may act on that message by including an entry in their `onMessages` hash.
-
-![](https://github.com/rotundasoftware/backbone.courier/blob/master/diagram.jpg)
+A view spawns a message that is passed to its parent using `view.spawn( messageName, [data] )`. 
 
 ```javascript
 myView.spawn( "selected", this.model );
 ```
 
 The view's parent can then "handle" the message and / or pass it to the parent's own parent, and so on, up the view hierarchy. By default, the DOM tree is used to infer the view hierarchy.
+
+![](https://github.com/rotundasoftware/backbone.courier/blob/master/diagram.jpg)
+
+Here is an example of a view that both spawns messages to its ancestors, and handles messages from its children.
 
 ```javascript
 MyViewClass = Backbone.View.extend( {
