@@ -53,7 +53,7 @@ MyViewClass = Backbone.View.extend( {
 		assert( source instanceof Backbone.View );
 
 		// and 3) the name of the message
-		assert( messageName === "selected" );
+		console.log( messageName ); // outputs the first argument to `spawn`
 	}
 	
 	// spawn a message that can be handled by our own parent
