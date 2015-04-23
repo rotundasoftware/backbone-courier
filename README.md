@@ -15,17 +15,17 @@ var MyViewClass = Backbone.View.extend( {
 
 ```
 
-A view spawns a message that is passed to its parent using `view.spawn( messageName, [data] )`. 
+Use `view.spawn( messageName, [data] )` to spawn a message that is passed up to a view's parent. 
 
 ```javascript
 myView.spawn( "selected", this.model );
 ```
 
-The view's parent can then "handle" the message and / or pass it to the parent's own parent, and so on, up the view hierarchy. By default, the DOM tree is used to infer the view hierarchy.
+The view's parent can then "handle" the message and / or pass it to the parent's own parent, and so on, up the view hierarchy. (The DOM tree is used to determine the view hierarchy.)
 
 ![](https://github.com/rotundasoftware/backbone.courier/blob/master/diagram.jpg)
 
-Here is an example of a view that both spawn a message to its ancestors, and handles a message from its children.
+Here is an example of a view that both spawns a message to its ancestors, and handles a message from its children.
 
 ```javascript
 MyViewClass = Backbone.View.extend( {
@@ -33,7 +33,11 @@ MyViewClass = Backbone.View.extend( {
 		Backbone.Courier.add( this );
 	}
 
-	// "handle" the "selected" message from any child view.
+	events : {
+		"click div.close-box" : "_closeBoxClicked"
+	},
+
+	// "handle" the "selected" message from a child view.
 	onMessages : {
 		"selected" : "_onChildSelected"
 	}
@@ -43,22 +47,18 @@ MyViewClass = Backbone.View.extend( {
 
 		// the three arguments to a message handler are:
 		// 1) any application defined data that has been supplied:
-		assert( data instanceof Backbone.Model );
+		console.log( data ); // outputs the second argument to `spawn`
 
-		// 2) the child view object that spawned or passed this
-		// message (in this case, myView):
+		// 2) the child view object that spawned or passed this message
 		assert( source instanceof Backbone.View );
 
 		// and 3) the name of the message
 		assert( messageName === "selected" );
 	}
-
-	// a separate example. messages can also be used to get dynamic
-	// values from ancestors, without explicit dependencies.
-	_getInfoFromAncestor : function() {
-		// messages that end in "!" have return values. They must
-		// be handled by an ancestor, or an error will be thrown.
-		var info = this.spawn( "giveMeYourInfo!" );
+	
+	// spawn a message that can be handled by our own parent
+	_closeBoxClicked : function() {
+		this.spawn( 'closeBoxClicked' );
 	}
 }
 ```
