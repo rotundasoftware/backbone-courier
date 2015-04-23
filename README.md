@@ -25,7 +25,7 @@ The view's parent can then "handle" the message and / or pass it to the parent's
 
 ![](https://github.com/rotundasoftware/backbone.courier/blob/master/diagram.jpg)
 
-Here is an example of a view that both spawns messages to its ancestors, and handles messages from its children.
+Here is an example of a view that both spawn a message to its ancestors, and handles a message from its children.
 
 ```javascript
 MyViewClass = Backbone.View.extend( {
