@@ -4,7 +4,7 @@ A tiny library that bubble events ("messages") up your [backbone.js](http://back
 
 ## How it works
 
-Include Backbone.Courier in your project. Now you can mixin Backbone.Courier to your views:
+First, include Backbone.Courier in your project and mixin Backbone.Courier to your views:
 
 ```javascript
 var MyViewClass = Backbone.View.extend( {
