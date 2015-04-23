@@ -1,24 +1,6 @@
 # Backbone.Courier
 
-A tiny library that bubble events ("messages") up your [backbone.js](http://backbonejs.org/) view hierarchy while promoting code reuse and maintainability by providing a framework for perfectly encapsulated views.
-
-Wait, what the heck does that mean, "perfectly encapsulated views"?
-
-## Perfectly Encapsulated Views
-
-Communication between views can get messy. However, if you follow some simple rules you can break down complex interfaces into perfectly encapsulated views that are easy to conceptualize, maintain and test. What specifically do perfectly encapsulated views look like?
-
-* Views only call methods on their *immediate* children. Their grandchildren can be interacted with only by calling methods on their children, which in turn call methods on their grandchildren, etc.
-* Views never have any explicit dependencies on their surroundings or their environment. That is, they do not have any explicit dependencies on or references to their ancestors or their siblings.
-* When a view needs to interact with its parent or an ancestor, it does so (*without* explicit dependencies) by spawning a message that bubbles up the view hierarchy.
-* When views pass messages from their children to their ancestors, they modify those messages in order to make them appropriate for the new, larger context and hide private concerns.
-* If a view needs information from its ancestors, it requests it using a message that bubbles up the hierarchy and then back down, returning a value (again, *without* explicit dependencies).
-* Global variables and / or event aggregators are not used.
-
-Backbone.Courier is a very small library (< 200 lines of code) that can be leveraged to easily follow these rules and create complex interfaces from simple, reusable, decoupled views.
-
-> BONUS: Use Backbone.Courier in conjunction with [Backbone.Subviews](https://github.com/rotundasoftware/backbone.subviews) and
-> [Cartero](https://github.com/rotundasoftware/cartero) / [Parcelify](https://github.com/rotundasoftware/parcelify) for a completely modularized backbone.js experience.
+A tiny library that bubble events ("messages") up your [backbone.js](http://backbonejs.org/) view hierarchy.
 
 ## How it works
 
@@ -209,6 +191,22 @@ The following methods may be overridden to customize Backbone.Courier for your e
 ### view._getChildViewNamed( childViewName )
 
 `view._getChildViewNamed( childViewName )` is an internal method that is used to resolve the child view names optionally supplied in the `source` part of the `onMessages` and `passMessages` hash. You may supply your own version of this method on your view objects in order to store child views in a location other than the default `view.subviews[ childViewName ]`.
+
+## Perfectly Encapsulated Views
+
+Beyond passing messages, Backbone.Courier promotes code reuse and maintainability by providing a framework for perfectly encapsulated views that are easy to conceptualize, maintain and test. What do perfectly encapsulated views look like?
+
+* Views only call methods on their *immediate* children. Their grandchildren can be interacted with only by calling methods on their children, which in turn call methods on their grandchildren, etc.
+* Views never have any explicit dependencies on their surroundings or their environment. That is, they do not have any explicit dependencies on or references to their ancestors or their siblings.
+* When a view needs to interact with its parent or an ancestor, it does so (*without* explicit dependencies) by spawning a message that bubbles up the view hierarchy.
+* When views pass messages from their children to their ancestors, they modify those messages in order to make them appropriate for the new, larger context and hide private concerns.
+* If a view needs information from its ancestors, it requests it using a message that bubbles up the hierarchy and then back down, returning a value (again, *without* explicit dependencies).
+* Global variables and / or event aggregators are not used.
+
+Backbone.Courier makes it easy to follow these rules and create complex interfaces from simple, reusable, decoupled views.
+
+> BONUS: Use Backbone.Courier in conjunction with [Backbone.Subviews](https://github.com/rotundasoftware/backbone.subviews) and
+> [Cartero](https://github.com/rotundasoftware/cartero) / [Parcelify](https://github.com/rotundasoftware/parcelify) for a completely modularized backbone.js experience.
 
 ## Dependencies
 
