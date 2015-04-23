@@ -201,7 +201,7 @@ Although Backbone.Courier is a simple library with a very small footprint, it ca
 * When views pass messages from their children to their ancestors, they modify those messages in order to make them appropriate for the new, larger context and hide private concerns.
 * Global variables and / or event aggregators are not used.
 
-Backbone.Courier provides a small set of tools that can be used to follow these rules of perfect encapsulation.
+Backbone.Courier provides a small set of tools that can be used to follow these rules.
 
 > BONUS: Use Backbone.Courier in conjunction with [Backbone.Subviews](https://github.com/rotundasoftware/backbone.subviews) and
 > [Cartero](https://github.com/rotundasoftware/cartero) / [Parcelify](https://github.com/rotundasoftware/parcelify) for a completely modularized backbone.js experience.
