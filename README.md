@@ -11,7 +11,9 @@ var myView = new Backbone.View();
 Backbone.Courier.add( myView ); // add courier functionality to myView
 ```
 
-A view spawns a message that is passed to its parent using `view.spawn( messageName, [data] )`:
+A view spawns a message that is passed to its parent using `view.spawn( messageName, [data] )`. A parent (or grandparent) may act on that message by including an entry in their `onMessages` hash.
+
+![](https://github.com/rotundasoftware/backbone.courier/blob/master/diagram.jpg)
 
 ```javascript
 myView.spawn( "selected", this.model );
