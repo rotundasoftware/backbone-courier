@@ -4,24 +4,13 @@ A tiny library that bubble events ("messages") up your [backbone.js](http://back
 
 ## How it works
 
-First, include Backbone.Courier in your project and mixin Backbone.Courier to your views:
-
-```javascript
-var MyViewClass = Backbone.View.extend( {
-	initialize : function() {
-		Backbone.Courier.add( this );
-	}
-} );
-
-```
-
-Now use `view.spawn( messageName, [data] )` to spawn a message. 
+Instead of using `view.trigger`, use `view.spawn( messageName, [data] )` to spawn a message. 
 
 ```javascript
 this.spawn( "selected", this.model );
 ```
 
-The view's parent can then "handle" the message and / or pass it to the parent's own parent, and so on, up the view hierarchy. (The DOM tree is used to determine the view hierarchy.)
+The message is `trigger`ed, just like a normal backbone event, and in addition, will automatically bubble up you view hierarchy. The view's parent can then "handle" the message and / or pass it to the parent's own parent, and so on. The DOM tree is used to determine the view hierarchy.
 
 ![](https://github.com/rotundasoftware/backbone.courier/blob/master/diagram.jpg)
 
@@ -30,7 +19,7 @@ Here is an example of a view that both spawns a message to its ancestors, and ha
 ```javascript
 MyViewClass = Backbone.View.extend( {
 	initialize : function() {
-		Backbone.Courier.add( this );
+		Backbone.Courier.add( this );  // add courier functionality to this view
 	}
 
 	events : {
@@ -76,7 +65,16 @@ MyViewClass = Backbone.View.extend( {
 
 ### <a name="add"></a>Backbone.Courier.add( view )
 
-Adds courier methods and behavior to `view`.
+Adds courier methods and behavior to `view`. To add courier functionality to all of your views, just wrap Backbone.View.initialize:
+
+```javascript
+var oldInitialize = Backbone.View.prototype.initialize;
+Backbone.View.prototype.initialize = function() {
+	Backbone.Courier.add( this );
+	return oldInitialize.apply( this, arguments );
+};
+
+```
 
 ### <a name="spawn"></a>view.spawn( messageName, [data] )
 
