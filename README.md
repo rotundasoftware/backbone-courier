@@ -10,7 +10,7 @@ Instead of using `view.trigger()`, use `view.spawn( messageName, [data] )` to sp
 this.spawn( "selected", this.model );
 ```
 
-The message is `trigger`ed, just like a normal backbone event, and in addition, will automatically bubble up you view hierarchy. The view's parent can then "handle" the message and / or pass it to the parent's own parent, and so on. The DOM tree is used to determine the view hierarchy.
+The message is `trigger`ed, just like a normal backbone event, and in addition, it will automatically bubble up you view hierarchy. The view's parent can then "handle" the message and / or pass it to the parent's own parent, and so on. The DOM tree is used to determine the view hierarchy.
 
 ![](https://github.com/rotundasoftware/backbone.courier/blob/master/diagram.jpg)
 
