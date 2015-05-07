@@ -4,7 +4,7 @@ A tiny library that bubble events ("messages") up your [backbone.js](http://back
 
 ## How it works
 
-Instead of using `view.trigger`, use `view.spawn( messageName, [data] )` to spawn a message. 
+Instead of using `view.trigger()`, use `view.spawn( messageName, [data] )` to spawn a message. 
 
 ```javascript
 this.spawn( "selected", this.model );
@@ -78,7 +78,7 @@ Backbone.View.prototype.initialize = function() {
 
 ### <a name="spawn"></a>view.spawn( messageName, [data] )
 
-The `spawn` method generates a new message and passes it to the view's "parent", i.e. the closest ancestor view in the DOM tree. The parent view can then "handle" this message, taking some action upon its receipt, by including an entry for this message in its `onMessages` hash, and / or it can pass this message to its own parent, using its `passMessages` hash. In this manner the message may bubble up the view hierarchy, as determined (by default) by the DOM tree.
+The `spawn` method generates a new message and passes it to the view's "parent", i.e. the closest ancestor view in the DOM tree. (It also calls `view.trigger( messageName, data )` so that you can listen to the message as you would a normal Backbone event.) The parent view can "handle" this message, taking some action upon its receipt, by including an entry for this message in its `onMessages` hash, and / or it can pass this message to its own parent, using its `passMessages` hash. In this manner the message may bubble up the view hierarchy, as determined (by default) by the DOM tree.
 
 `messageName` is the name of the message being spawned. The name is used in the `onMessages` and `passMessages` hashes of ancestor views to handle or pass the message further up the view hierarchy, respectively.
 
@@ -189,19 +189,17 @@ The following methods may be overridden to customize Backbone.Courier for your e
 
 `view._getChildViewNamed( childViewName )` is an internal method that is used to resolve the child view names optionally supplied in the `source` part of the `onMessages` and `passMessages` hash. You may supply your own version of this method on your view objects in order to store child views in a location other than the default `view.subviews[ childViewName ]`.
 
-## Perfectly Encapsulated Views
+## Encapsulated Views
 
-Although Backbone.Courier is a simple library with a very small footprint, it can be leveraged to write applications composed of perfectly encapsulated views. Ecapsulation makes modules easy to conceptualize, maintain and test. Backbone views that are encapsulated, and Backbone applications built from encapsulated views, have these same characteristics. But what do perfectly encapsulated views look like? Here's our vision:
+Although Backbone.Courier is a simple library with a very small footprint, its use significantly improves encapsulation in the view layer. Encapsulation makes modules easy to conceptualize, maintain and test. Backbone views that are encapsulated, and Backbone applications built from encapsulated views, have these same characteristics. But what do encapsulated views look like and how does courier help? Here's our vision:
 
-* Views only call methods on their *immediate* children. Their grandchildren can be interacted with only by calling methods on their children, which in turn call methods on their grandchildren, etc.
 * Views *never have any explicit dependencies on their surroundings or their environment*. That is, they do not have any explicit dependencies on or references to their ancestors or their siblings.
 * When a view needs to interact with its parent or an ancestor, it does so (*without* explicit dependencies) by spawning a message that bubbles up the view hierarchy.
 * When views pass messages from their children to their ancestors, they modify those messages in order to make them appropriate for the new, larger context and hide private concerns.
+* Views only call methods on their *immediate* children. Their grandchildren can be interacted with only by calling methods on their children, which in turn call methods on their grandchildren, etc.
 * Global variables and / or event aggregators are not used.
 
-Backbone.Courier provides a small set of tools that can be used to follow these rules.
-
-> BONUS: Use Backbone.Courier in conjunction with [Backbone.Subviews](https://github.com/rotundasoftware/backbone.subviews) and
+> NOTE: You can use Backbone.Courier with [Backbone.Subviews](https://github.com/rotundasoftware/backbone.subviews) and
 > [Cartero](https://github.com/rotundasoftware/cartero) / [Parcelify](https://github.com/rotundasoftware/parcelify) for a completely modularized backbone.js experience.
 
 ## Dependencies
