@@ -24,5 +24,9 @@
     "name": "Rotunda Software"
   },
   "license": "MIT",
-  "readmeFilename": "README.md"
+  "readmeFilename": "README.md",
+  "dependencies": {
+    "backbone": "^1.2.3",
+    "underscore": "^1.8.3"
+  }
 }
