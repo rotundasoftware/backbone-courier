@@ -1,5 +1,5 @@
 /*
- * Backbone.Courier, v1.0.4
+ * Backbone.Courier, v1.0.5
  * Copyright (c)2013 Rotunda Software, LLC.
  * Distributed under MIT license
  * http://github.com/rotundasoftware/backbone.courier
@@ -166,7 +166,7 @@
 				var match = key.match( delegateEventSplitter );
 
 				var eventName = match[ 1 ], subviewName = match[ 2 ];
-				var eventNameRegEx = new RegExp( eventName.replace( "*", "[\\w]*" ) );
+				var eventNameRegEx = new RegExp( '^' + eventName.replace( "*", "[\\w]*" ) + '$' );
 				if( ! eventNameRegEx.test( message.name ) ) continue;
 
 				if( subviewName !== "" && view._getChildViewNamed( subviewName ) !== message.source ) continue;
