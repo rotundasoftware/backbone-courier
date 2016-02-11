@@ -1,5 +1,5 @@
 /*
- * Backbone.Courier, v1.0.5
+ * Backbone.Courier, v2.0.0
  * Copyright (c)2013 Rotunda Software, LLC.
  * Distributed under MIT license
  * http://github.com/rotundasoftware/backbone.courier
@@ -41,7 +41,7 @@
 			} else if( _.isUndefined( message.name ) ) throw new Error( "Undefined message name." );
 
 			message.source = view;
-			message.data = message.data || {};
+			message.data = _.isUndefined( message.data ) ? {} : message.data;
 
 			this.trigger( message.name, message.data );
 
@@ -51,6 +51,8 @@
 			var messageShouldBePassed;
 			var value;
 
+			if( message.name === 'removeButtonClicked' ) console.log( 'gotit' ); // REMOVEME
+	
 			while( curParent ) {
 				// check to see if curParent has an action to perform when this message is received.
 				if( _.isObject( curParent.onMessages ) ) {
@@ -94,8 +96,7 @@
 				curParent = curParent._getParentView();
 			}
 
-			if( isRoundTripMessage )
-				throw new Error( "Round trip message \"" + message.name + "\" was not handled. All round trip messages must be handled." );
+			if( isRoundTripMessage ) return undefined;
 		};
 
 		// supply your own _getParentView function on your view objects

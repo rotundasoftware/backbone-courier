@@ -86,10 +86,7 @@ The `spawn` method generates a new message and passes it to the view's "parent",
 
 > #### Round trip messages
 > 
-> If `messageName` ends in `!`, the message is considered a "round trip message". Round trip messages are special in that they return values. That is, the `spawn()` method will return the value returned by the first (and only) method that handles the message. Using round trip messages, views can obtain dynamic information about their environment that, because it is dynamic, can not be passed in through configuration options. Round trip messages have two other special characteristics:
->
-> * Round trip messages *must* be handled. If they are not handled by any ancestor view, an error will be thrown.
-> * Round trip messages will continue to be passed up the hierarchy until they are handled (no entry in the `passMessages` hash is required).
+> If `messageName` ends in `!`, the message is considered a "round trip message". Round trip messages are special in that they return values. That is, the `spawn()` method will return the value returned by the first (and only) method that handles the message. Using round trip messages, views can obtain dynamic information about their environment that, because it is dynamic, can not be passed in through configuration options. Round trip messages are special in that they will continue to be passed up the hierarchy until they are handled - no entry in the `passMessages` hash is required. If they are not handled, `spawn()` returns `undefined`.
 
 ### <a name="onMessages"></a>view.onMessages
 
@@ -208,6 +205,9 @@ Although Backbone.Courier is a simple library with a very small footprint, its u
 * jQuery or Zepto. You can eliminate this dependency by overriding `view._getParentView()` and providing an alternate means to determine view hierarchy that does not rely on the `$.parent()` and `$.data()` functions.
 
 ## Change log
+
+#### v3.0.0
+* BREAKING: Round trip messages will no longer thrown an exception if they are not handled. Instead, the `spawn()` method will simply return `undefined`.
 
 #### v1.0.0
 
