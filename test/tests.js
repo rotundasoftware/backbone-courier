@@ -73,9 +73,7 @@ $(document).ready(function() {
 
 	test('Spawn unhandled roundtrip message', 1, function() {
 
-			throws( function() { this.childView.spawn('roundtripMessage!'); },
-				'Error thrown because there was no handler for roundtripMessage!');
-
+		equal( this.childView.spawn('roundtripMessage!'), undefined, 'Unhandled round trip message returns undefined');
 	});
 
 	module("View.onMessages",

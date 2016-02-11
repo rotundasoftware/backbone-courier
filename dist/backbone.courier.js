@@ -167,7 +167,7 @@
 				var match = key.match( delegateEventSplitter );
 
 				var eventName = match[ 1 ], subviewName = match[ 2 ];
-				var eventNameRegEx = new RegExp( '^' + eventName.replace( "*", "[\\w]*" ) + '$' );
+				var eventNameRegEx = new RegExp( '^' + eventName.replace( /\*/g, "[\\w]*" ) + '$' );
 				if( ! eventNameRegEx.test( message.name ) ) continue;
 
 				if( subviewName !== "" && view._getChildViewNamed( subviewName ) !== message.source ) continue;
