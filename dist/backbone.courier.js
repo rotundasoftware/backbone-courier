@@ -50,8 +50,6 @@
 			var curParent = this._getParentView();
 			var messageShouldBePassed;
 			var value;
-
-			if( message.name === 'removeButtonClicked' ) console.log( 'gotit' ); // REMOVEME
 	
 			while( curParent ) {
 				// check to see if curParent has an action to perform when this message is received.
