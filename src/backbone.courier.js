@@ -97,22 +97,11 @@
 		// if you would like to use custom means to determine a view's
 		// "parent". The default means is to traverse the DOM tree and return
 		// the closest parent element that has a view object attached in el.data( "view" )
-		if( ! _.isFunction( view._getParentView ) )
+		if( ! _.isFunction( view._getParentView ) ) {
 			view._getParentView = function() {
-				var parent = null;
-				var curElement = this.$el.parent();
-				while( curElement.length > 0 && curElement[0] !== lastPossibleViewElement ) {
-					var view = curElement.data( "view" );
-					if( view && _.isFunction( view.render ) ) {
-						parent = view;
-						break;
-					}
-
-					curElement = curElement.parent();
-				}
-
-				return parent;
-			};
+				return Backbone.Courier.findClosestParentView( view );
+			}
+		}
 
 		// supply your own _getChildViewNamed function on your view objects
 		// if you would like to use another means to test the source of your
@@ -188,6 +177,22 @@
 
 			return matchingEntries.length ? matchingEntries[ 0 ].value : null;
 		}
+	};
+
+	Backbone.Courier.findClosestParentView = function( view ) {
+		var parent = null;
+		var curElement = view.$el.parent();
+		while( curElement.length > 0 && curElement[0] !== lastPossibleViewElement ) {
+			var curElementView = curElement.data( "view" );
+			if( curElementView && _.isFunction( curElementView.render ) ) {
+				parent = curElementView;
+				break;
+			}
+
+			curElement = curElement.parent();
+		}
+
+		return parent;
 	};
 
 	return Backbone.Courier;
