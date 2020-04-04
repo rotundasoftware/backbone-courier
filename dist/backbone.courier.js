@@ -1,5 +1,5 @@
 /*
- * Backbone.Courier, v2.0.0
+ * Backbone.Courier, v3.1.0
  * Copyright (c)2013 Rotunda Software, LLC.
  * Distributed under MIT license
  * http://github.com/rotundasoftware/backbone.courier
@@ -50,7 +50,7 @@
 			var curParent = this._getParentView();
 			var messageShouldBePassed;
 			var value;
-	
+
 			while( curParent ) {
 				// check to see if curParent has an action to perform when this message is received.
 				if( _.isObject( curParent.onMessages ) ) {
@@ -65,32 +65,25 @@
 					}
 				}
 
-				messageShouldBePassed = isRoundTripMessage;
+				if( isRoundTripMessage ) {
+					messageShouldBePassed = true;
+				} else {
+					// execute `passMessages` if its configured as a function
+					var passMessages = _.result( curParent, "passMessages" );
 
-				// execute `passMessages` if its configured as a function
-				var passMessages = _.result( curParent, "passMessages" );
-				// check to see if this message should be passed up a level
-				if( _.isObject( passMessages ) ) {
-					value = getValueOfBestMatchingHashEntry( passMessages, message, curParent );
-					if( value !== null ) {
-						
-
-						if( value === "." )
-							; // noop - pass this message through exactly as-is
-						else if( _.isString( value ) ) {
-							// if value is a string, we pass the existing message but
-							// change the name to the supplied string
-							message.name = value;
+					// check to see if this message should be passed up a level
+					if( ! _.isUndefined( passMessages ) ) {
+						if( _.isBoolean( passMessages ) ) messageShouldBePassed = passMessages;
+						else if( _.isArray( passMessages ) ) {
+							messageShouldBePassed = _.contains( passMessages, message.name );
+						} else {
+							throw new TypeError( "passMessages should be boolean or an array." );
 						}
-						else throw new TypeError( "Values of passMessages hash should be strings." );
-
-						messageShouldBePassed = true;
 					}
 				}
 
 				if( ! messageShouldBePassed ) break; // if this message should not be passed, then we are done
 
-				message.source = curParent; // keep the source of the message current as the message bubbles up the view hierarchy
 				curParent = curParent._getParentView();
 			}
 
@@ -101,22 +94,11 @@
 		// if you would like to use custom means to determine a view's
 		// "parent". The default means is to traverse the DOM tree and return
 		// the closest parent element that has a view object attached in el.data( "view" )
-		if( ! _.isFunction( view._getParentView ) )
+		if( ! _.isFunction( view._getParentView ) ) {
 			view._getParentView = function() {
-				var parent = null;
-				var curElement = this.$el.parent();
-				while( curElement.length > 0 && curElement[0] !== lastPossibleViewElement ) {
-					var view = curElement.data( "view" );
-					if( view && _.isFunction( view.render ) ) {
-						parent = view;
-						break;
-					}
-
-					curElement = curElement.parent();
-				}
-
-				return parent;
-			};
+				return Backbone.Courier.findClosestParentView( view );
+			}
+		}
 
 		// supply your own _getChildViewNamed function on your view objects
 		// if you would like to use another means to test the source of your
@@ -192,6 +174,22 @@
 
 			return matchingEntries.length ? matchingEntries[ 0 ].value : null;
 		}
+	};
+
+	Backbone.Courier.findClosestParentView = function( view ) {
+		var parent = null;
+		var curElement = view.$el.parent();
+		while( curElement.length > 0 && curElement[0] !== lastPossibleViewElement ) {
+			var curElementView = curElement.data( "view" );
+			if( curElementView && _.isFunction( curElementView.render ) ) {
+				parent = curElementView;
+				break;
+			}
+
+			curElement = curElement.parent();
+		}
+
+		return parent;
 	};
 
 	return Backbone.Courier;

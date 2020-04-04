@@ -45,8 +45,6 @@
 			var messageShouldBePassed;
 			var value;
 
-			if( message.name === 'removeButtonClicked' ) console.log( 'gotit' ); // REMOVEME
-	
 			while( curParent ) {
 				// check to see if curParent has an action to perform when this message is received.
 				if( _.isObject( curParent.onMessages ) ) {
@@ -61,32 +59,25 @@
 					}
 				}
 
-				messageShouldBePassed = isRoundTripMessage;
+				if( isRoundTripMessage ) {
+					messageShouldBePassed = true;
+				} else {
+					// execute `passMessages` if its configured as a function
+					var passMessages = _.result( curParent, "passMessages" );
 
-				// execute `passMessages` if its configured as a function
-				var passMessages = _.result( curParent, "passMessages" );
-				// check to see if this message should be passed up a level
-				if( _.isObject( passMessages ) ) {
-					value = getValueOfBestMatchingHashEntry( passMessages, message, curParent );
-					if( value !== null ) {
-						
-
-						if( value === "." )
-							; // noop - pass this message through exactly as-is
-						else if( _.isString( value ) ) {
-							// if value is a string, we pass the existing message but
-							// change the name to the supplied string
-							message.name = value;
+					// check to see if this message should be passed up a level
+					if( ! _.isUndefined( passMessages ) ) {
+						if( _.isBoolean( passMessages ) ) messageShouldBePassed = passMessages;
+						else if( _.isArray( passMessages ) ) {
+							messageShouldBePassed = _.contains( passMessages, message.name );
+						} else {
+							throw new TypeError( "passMessages should be boolean or an array." );
 						}
-						else throw new TypeError( "Values of passMessages hash should be strings." );
-
-						messageShouldBePassed = true;
 					}
 				}
 
 				if( ! messageShouldBePassed ) break; // if this message should not be passed, then we are done
 
-				message.source = curParent; // keep the source of the message current as the message bubbles up the view hierarchy
 				curParent = curParent._getParentView();
 			}
 

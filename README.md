@@ -59,7 +59,7 @@ MyViewClass = Backbone.View.extend( {
 * [Backbone.Courier.add( view )](#add) - add courier functionality to view
 * [view.spawn( messageName, [data] )](#spawn) - spawn a message to pass up the view hierarchy
 * [view.onMessages](#onMessages) - (hash) determines how messages from child views are handled
-* [view.passMessages](#passMessages) - (hash) determines how / which messages are passed on to the parent view
+* [view.passMessages](#passMessages) - (boolean or array) determines which messages are passed on to the parent view
 
 ---
 
@@ -78,15 +78,15 @@ Backbone.View.prototype.initialize = function() {
 
 ### <a name="spawn"></a>view.spawn( messageName, [data] )
 
-The `spawn` method generates a new message and passes it to the view's "parent", i.e. the closest ancestor view in the DOM tree. (It also calls `view.trigger( messageName, data )` so that you can listen to the message as you would a normal Backbone event.) The parent view can "handle" this message, taking some action upon its receipt, by including an entry for this message in its `onMessages` hash, and / or it can pass this message to its own parent, using its `passMessages` hash. In this manner the message may bubble up the view hierarchy, as determined (by default) by the DOM tree.
+The `spawn` method generates a new message and passes it to the view's "parent", i.e. the closest ancestor view in the DOM tree. (It also calls `view.trigger( messageName, data )` so that you can listen to the message as you would a normal Backbone event.) The parent view can "handle" this message, taking some action upon its receipt, by including an entry for this message in its `onMessages` hash, or it can pass this message to its own parent, using its `passMessages` property. In this manner the message may bubble up the view hierarchy, as determined (by default) by the DOM tree.
 
-`messageName` is the name of the message being spawned. The name is used in the `onMessages` and `passMessages` hashes of ancestor views to handle or pass the message further up the view hierarchy, respectively.
+`messageName` is the name of the message being spawned. The name is used in the `onMessages` and `passMessages` properties of ancestor views to handle or pass the message further up the view hierarchy, respectively.
 
 `data` is application defined data that will be available to this view's ancestors when handling or passing this message.
 
 > #### Round trip messages
 > 
-> If `messageName` ends in `!`, the message is considered a "round trip message". Round trip messages are special in that they return values. That is, the `spawn()` method will return the value returned by the first (and only) method that handles the message. Using round trip messages, views can obtain dynamic information about their environment that, because it is dynamic, can not be passed in through configuration options. Round trip messages are special in that they will continue to be passed up the hierarchy until they are handled - no entry in the `passMessages` hash is required. If they are not handled, `spawn()` returns `undefined`.
+> If `messageName` ends in `!`, the message is considered a "round trip message". Round trip messages are special in that they return values. That is, the `spawn()` method will return the value returned by the first (and only) method that handles the message. Using round trip messages, views can obtain dynamic information about their environment that, because it is dynamic, can not be passed in through configuration options. Round trip messages are special in that they will continue to be passed up the hierarchy until they are handled - regardless of the value of each intermediate view's `passMessages` property. If they are not handled, `spawn()` returns `undefined`.
 
 ### <a name="onMessages"></a>view.onMessages
 
@@ -138,36 +138,7 @@ _onResourceSelected : function( data ) {
 
 ### <a name="passMessages"></a>view.passMessages
 
-The `passMessages` hash is used to pass messages received from a child view further up the view hierarchy, to potentially be handled by a more distant ancestor. Each entry in the hash has the format:
-
-	"messageName source" : "newMessageName"
-
-The `messageName` and `source` parts of the hash key interpreted in exactly the same way as in the `onMessages` hash. 
-
-> Note: An asterix character `*` can be used in both the `passMessages` and `onMessages` hashes as a
-> wildcard in the `messageName` to match zero or more letters, numbers, or underscores. If multiple
-> entries match the message name, the most specific entry will "win", that is, the entry with the
-> greatest number of non-wildcard characters will be used.
-
-The value of `newMessageName` determines the message that is passed to the view's parent. It is often desirable to change a message's name as it bubbles up to a new, larger context. For example, "selected" might become "resourceSelected" as it moves from a resource view to a larger parent view that contains resources as well as other items. If you do not want to change the message at all before passing it up the hierarchy, specify the string `"."` (a single period).
-
-> Note: If you would like to change the application defined data in the message, you need to handle
-> the message in the `onMessages` hash and then re-spawn the message with new data.
-
-Example entries in the `passMessages` hash:
-
-```javascript
-passMessages : {
-	 // pass the "keyup" message on to parent, without any changes
-	"keyup" : ".",
-
-	// change the "selected" message from the resourcesCollectionView
-	// child view to "resourceSelected", and pass to parent
-	"selected resourcesCollectionView" : "resourceSelected", 
-
-	 // pass all other messages on to parent, without any changes
-	"*" : "."
-},
+The `passMessages` property is used to pass messages received from a child view further up the view hierarchy, to potentially be handled by a more distant ancestor. If the property is `false` which is the default, no messages are passed through the view. If the proerty is `true`, all (unhandled) messages are passed through the view. If the property is an array, only messages with the names it contains will be passed through. If / when the message is eventually handled further up the hierarchy, the `source` of the message will be the view from which it was originally spawned.
 
 ...
 ```
@@ -184,7 +155,7 @@ The following methods may be overridden to customize Backbone.Courier for your e
 
 ### view._getChildViewNamed( childViewName )
 
-`view._getChildViewNamed( childViewName )` is an internal method that is used to resolve the child view names optionally supplied in the `source` part of the `onMessages` and `passMessages` hash. You may supply your own version of this method on your view objects in order to store child views in a location other than the default `view.subviews[ childViewName ]`.
+`view._getChildViewNamed( childViewName )` is an internal method that is used to resolve the child view names optionally supplied in the `source` part of the `onMessages` hash. You may supply your own version of this method on your view objects in order to store child views in a location other than the default `view.subviews[ childViewName ]`.
 
 ## Encapsulated Views
 
@@ -205,6 +176,9 @@ Although Backbone.Courier is a simple library with a very small footprint, its u
 * jQuery or Zepto. You can eliminate this dependency by overriding `view._getParentView()` and providing an alternate means to determine view hierarchy that does not rely on the `$.parent()` and `$.data()` functions.
 
 ## Change log
+
+#### v4.0.0
+* BREAKING: The old `passMessages` hash is no longer a hash. It is now either a boolean or an array of the message names that should be passed through the view. Also, the `source` of the message will now remain the same when it is passed. That is to say, when the message is eventually handed, its `source` will be the view that originally spawned it, instead of the view that most recently passed it.
 
 #### v3.0.0
 * BREAKING: Round trip messages will no longer thrown an exception if they are not handled. Instead, the `spawn()` method will simply return `undefined`.
