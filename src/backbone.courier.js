@@ -41,6 +41,7 @@
 
 			var isRoundTripMessage = message.name.charAt(message.name.length - 1) === "!";
 
+			var curChild = this;
 			var curParent = this._getParentView();
 			var messageShouldBePassed;
 			var value;
@@ -48,7 +49,7 @@
 			while( curParent ) {
 				// check to see if curParent has an action to perform when this message is received.
 				if( _.isObject( curParent.onMessages ) ) {
-					value = getValueOfBestMatchingHashEntry( curParent.onMessages, message, curParent );
+					value = getValueOfBestMatchingHashEntry( curParent.onMessages, message, curParent, curChild );
 					if( value !== null ) {
 						var method = value;
 						if( ! _.isFunction( method ) ) method = curParent[ value ];
@@ -78,6 +79,7 @@
 
 				if( ! messageShouldBePassed ) break; // if this message should not be passed, then we are done
 
+				curChild = curParent;
 				curParent = curParent._getParentView();
 			}
 
@@ -124,7 +126,7 @@
 			if( _.isFunction( view.$el.data ) && ! view.$el.data( "view" ) ) view.$el.data( "view", view );
 		}
 
-		function getValueOfBestMatchingHashEntry( hash, message, view ) {
+		function getValueOfBestMatchingHashEntry( hash, message, view, sourceView ) {
 			// return the value of the entry in a onMessages or passMessages hash that is the 
 			// "most specific" match for this message, or null, if there are no matches.
 
@@ -144,7 +146,7 @@
 				var eventNameRegEx = new RegExp( '^' + eventName.replace( /\*/g, "[\\w]*" ) + '$' );
 				if( ! eventNameRegEx.test( message.name ) ) continue;
 
-				if( subviewName !== "" && view._getChildViewNamed( subviewName ) !== message.source ) continue;
+				if( subviewName !== "" && view._getChildViewNamed( subviewName ) !== sourceView ) continue;
 
 				matchingEntries.push( { eventName : eventName, subviewName : subviewName, value : hash[ key ] } );
 			}
