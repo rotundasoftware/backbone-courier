@@ -133,7 +133,6 @@ _onResourceSelected : function( data ) {
 	// handle the selected message from the resourcesCollectionView child view
 }
 
-...
 ```
 
 ### <a name="passMessages"></a>view.passMessages
