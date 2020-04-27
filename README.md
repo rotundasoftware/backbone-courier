@@ -140,9 +140,6 @@ _onResourceSelected : function( data ) {
 
 The `passMessages` property is used to pass messages received from a child view further up the view hierarchy, to potentially be handled by a more distant ancestor. If the property is `false` which is the default, no messages are passed through the view. If the proerty is `true`, all (unhandled) messages are passed through the view. If the property is an array, only messages with the names it contains will be passed through. If / when the message is eventually handled further up the hierarchy, the `source` of the message will be the view from which it was originally spawned.
 
-...
-```
-
 ## Internal view methods that may be overridden
 
 The following methods may be overridden to customize Backbone.Courier for your environment. To override one of the methods, attach your own version of the method to your view objects either before or after calling Backbone.Courier.add().
